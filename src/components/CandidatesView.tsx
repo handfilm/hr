@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, CheckCircle2, Circle, Download, Search, X } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Circle, Download, MessageCircle, Search, X } from 'lucide-react';
 import {
   Candidate,
   ComplianceChecklist,
@@ -372,16 +372,30 @@ export function CandidatesView({
               </div>
             </div>
 
-            {selectedCandidate.stage !== 'Deployed' && (
-              <button
-                type="button"
-                onClick={() => onAdvanceStage(selectedCandidate.id)}
-                className="w-full min-h-[68px] px-5 bg-[#FF5500] hover:bg-[#ff6a1a] text-black font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
+            <div className="space-y-3 pt-2">
+              {selectedCandidate.stage !== 'Deployed' && (
+                <button
+                  type="button"
+                  onClick={() => onAdvanceStage(selectedCandidate.id)}
+                  className="w-full min-h-[68px] px-5 bg-[#FF5500] hover:bg-[#ff6a1a] text-black font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer"
+                >
+                  <span>{t.actions.advanceStage}</span>
+                  <ArrowRight className="w-5 h-5" aria-hidden="true" />
+                </button>
+              )}
+
+              <a
+                href={`https://wa.me/${selectedCandidate.phone.replace(/[^\d]/g, '')}?text=${encodeURIComponent(
+                  `Hands & Head HR Status Update\nTracking ID: ${selectedCandidate.id}\nCandidate: ${selectedCandidate.fullName}\nCurrent Stage: ${t.stages[selectedCandidate.stage]}\nDestination: ${selectedCandidate.targetPrefecture}`,
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full min-h-[60px] px-5 bg-[#10b981] hover:bg-[#34d399] text-black font-bold text-sm uppercase tracking-wider flex items-center justify-center gap-2 transition-colors"
               >
-                <span>{t.actions.advanceStage}</span>
-                <ArrowRight className="w-5 h-5" aria-hidden="true" />
-              </button>
-            )}
+                <MessageCircle className="w-5 h-5 shrink-0" aria-hidden="true" />
+                <span>{t.actions.sendWhatsappStatus}</span>
+              </a>
+            </div>
           </aside>
         )}
       </div>

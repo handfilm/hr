@@ -49,7 +49,12 @@ export function App() {
   const [candidates, setCandidates] = useState<Candidate[]>(() => {
     try {
       const raw = localStorage.getItem(STORAGE_CANDIDATES_KEY);
-      if (raw) return JSON.parse(raw) as Candidate[];
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed as Candidate[];
+        }
+      }
     } catch {
       // ignore storage errors
     }
@@ -59,7 +64,12 @@ export function App() {
   const [requisitions, setRequisitions] = useState<JobRequisition[]>(() => {
     try {
       const raw = localStorage.getItem(STORAGE_REQS_KEY);
-      if (raw) return JSON.parse(raw) as JobRequisition[];
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed as JobRequisition[];
+        }
+      }
     } catch {
       // ignore storage errors
     }
