@@ -111,3 +111,8 @@ export interface PartnerHub {
 }
 
 export type WorkspaceTab = 'overview' | 'candidates' | 'jobs' | 'compliance' | 'partners';
+
+export type InfoModalType = 'faq' | 'privacy' | 'contact' | null;
+
+export type TopNavSection = 'home' | 'demands' | 'legal' | 'faq' | 'privacy' | 'contact';
+

@@ -1,6 +1,14 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Activity, Plus } from 'lucide-react';
-import type { AppMode, Candidate, JobRequisition, Locale, WorkspaceTab } from './types.ts';
+import type {
+  AppMode,
+  Candidate,
+  InfoModalType,
+  JobRequisition,
+  Locale,
+  TopNavSection,
+  WorkspaceTab,
+} from './types.ts';
 import { TRANSLATIONS } from './i18n.ts';
 import { PARTNER_HUBS } from './data/initialData.ts';
 import { useRecruitmentSync } from './sync/engine.ts';
@@ -8,6 +16,8 @@ import { CyberOverlay } from './components/CyberOverlay.tsx';
 import { TopAllianceHeader } from './components/TopAllianceHeader.tsx';
 import { PublicHomePage } from './components/PublicHomePage.tsx';
 import { LegalProtectionModal } from './components/LegalProtectionModal.tsx';
+import { InfoModal } from './components/InfoModal.tsx';
+import { Footer } from './components/Footer.tsx';
 import { ApplicationWizardModal } from './components/ApplicationWizardModal.tsx';
 import { AuditSyncDrawer } from './components/AuditSyncDrawer.tsx';
 import { Sidebar } from './components/Sidebar.tsx';
@@ -67,6 +77,7 @@ export function App() {
   });
   const [wizardStep, setWizardStep] = useState<1 | 2 | null>(null);
   const [showLegalModal, setShowLegalModal] = useState(false);
+  const [infoModal, setInfoModal] = useState<InfoModalType>(null);
   const [showAuditDrawer, setShowAuditDrawer] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [showCreateReqModal, setShowCreateReqModal] = useState(false);
@@ -82,14 +93,33 @@ export function App() {
 
   const t = TRANSLATIONS[locale];
 
-  const liveAvailableSlots = useMemo(
-    () =>
-      requisitions.reduce(
-        (sum, r) => sum + Math.max(0, r.openQuota - (r.lockedSlots + r.confirmedSlots)),
-        0,
-      ),
-    [requisitions],
-  );
+  const handleNavigateSection = useCallback((section: TopNavSection) => {
+    if (section === 'home') {
+      setMode('public');
+      setInfoModal(null);
+      setShowLegalModal(false);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+    if (section === 'demands') {
+      setMode('public');
+      setInfoModal(null);
+      setShowLegalModal(false);
+      window.setTimeout(() => {
+        document
+          .getElementById('job-demands-matrix')
+          ?.scrollIntoView({ behavior: 'smooth' });
+      }, 60);
+      return;
+    }
+    if (section === 'legal') {
+      setInfoModal(null);
+      setShowLegalModal(true);
+      return;
+    }
+    setShowLegalModal(false);
+    setInfoModal(section);
+  }, []);
 
   const handleWizardSubmit = async (newCandidate: Candidate, englishScore: number) => {
     await submitCandidate(newCandidate, 'PUBLIC_APPLICANT', englishScore);
@@ -128,9 +158,7 @@ export function App() {
         onChangeLocale={setLocale}
         overlayEnabled={overlayEnabled}
         onToggleOverlay={() => setOverlayEnabled((v) => !v)}
-        syncMode={syncMode}
-        outboxCount={outboxCount}
-        liveAvailableSlots={liveAvailableSlots}
+        onNavigateSection={handleNavigateSection}
         t={t}
       />
 
@@ -267,6 +295,8 @@ export function App() {
         </div>
       )}
 
+      <Footer t={t} onNavigateSection={handleNavigateSection} />
+
       {/* Public Modals */}
       {wizardStep !== null && (
         <ApplicationWizardModal
@@ -289,6 +319,14 @@ export function App() {
         <LegalProtectionModal
           t={t}
           onClose={() => setShowLegalModal(false)}
+        />
+      )}
+
+      {infoModal !== null && (
+        <InfoModal
+          type={infoModal}
+          t={t}
+          onClose={() => setInfoModal(null)}
         />
       )}
 
