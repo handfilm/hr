@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Bebas Neue", "Hind Siliguri", "Noto Sans JP", sans-serif;
+  --font-sans: "Hind Siliguri", "Noto Sans JP", system-ui, sans-serif;
+  --font-mono: "Space Mono", monospace;
+}
+
+@layer base {
+  html {
+    background-color: #0a0a0a;
+    color: #ffffff;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background-color: #0a0a0a;
+    color: #ffffff;
+    overflow-x: hidden;
+  }
+}
+
+.font-brutal-display {
+  font-family: "Bebas Neue", "Hind Siliguri", "Noto Sans JP", sans-serif;
+  letter-spacing: 0.03em;
+}
+
+.font-brutal-mono {
+  font-family: "Space Mono", monospace;
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+@keyframes radar-scan {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100vh);
+  }
+}
+
+@keyframes node-pulse {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.25);
+  }
+}
+
+.animate-radar-scan {
+  animation: radar-scan 8s linear infinite;
+}
+
+.animate-node-pulse {
+  animation: node-pulse 2.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-radar-scan,
+  .animate-node-pulse {
+    animation: none;
+  }
+}
