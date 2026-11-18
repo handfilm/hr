@@ -35,6 +35,15 @@ export interface ContactDeskCopy {
   hours: string;
 }
 
+export interface PartnerSpotlightCopy {
+  country: string;
+  role: string;
+  shortSubtitle: string;
+  headquarters: string;
+  credentialBadge: string;
+  highlights: string[];
+}
+
 export interface Translations {
   allianceBrand: string;
   portalTitle: string;
@@ -44,12 +53,27 @@ export interface Translations {
     jp: string;
     vn: string;
   };
+  allianceSpotlight: {
+    tapHint: string;
+    hqLabel: string;
+    roleLabel: string;
+    verifiedLabel: string;
+    bd: PartnerSpotlightCopy;
+    jp: PartnerSpotlightCopy;
+    vn: PartnerSpotlightCopy;
+  };
   topNav: {
     home: string;
     demands: string;
     legal: string;
     faq: string;
     privacy: string;
+    contact: string;
+  };
+  mobileNav: {
+    home: string;
+    demands: string;
+    legal: string;
     contact: string;
   };
   modeSwitch: {
@@ -62,6 +86,8 @@ export interface Translations {
   heroSlides: [HeroSlideCopy, HeroSlideCopy, HeroSlideCopy];
   hero: {
     quotaPill: string;
+    mainRecruiterLabel: string;
+    mainRecruiterLocation: string;
     headline: string;
     subline: string;
     applyNow: string;
@@ -107,6 +133,7 @@ export interface Translations {
   };
   footer: {
     brandTitle: string;
+    allianceHeading: string;
     ethicalNotice: string;
     quickLinksHeading: string;
     privacyHeading: string;
@@ -114,6 +141,13 @@ export interface Translations {
     copyright: string;
     techProviderLabel: string;
     techProviderName: string;
+    techProviderCard: {
+      badge: string;
+      title: string;
+      subtitle: string;
+      websiteUrl: string;
+      features: string[];
+    };
   };
   matrix: {
     sectionLabel: string;
@@ -127,6 +161,16 @@ export interface Translations {
     overtimeItems: { rate: string; desc: string }[];
     bmetTitle: string;
     bmetItems: string[];
+    liveSearchHeading: string;
+    liveSearchSubheading: string;
+    liveBtnBmet: string;
+    liveBtnVietnam: string;
+    liveSearchPlaceholder: string;
+    liveSearchBtn: string;
+    liveSearching: string;
+    liveSourcesLabel: string;
+    liveSearchedAtLabel: string;
+    liveDisclaimer: string;
     close: string;
   };
   wizard: {
@@ -213,6 +257,27 @@ export interface Translations {
     japanSub: string;
   };
   stages: Record<PipelineStage, string>;
+  trends: {
+    heading: string;
+    subheading: string;
+    stageDistTitle: string;
+    stageDistSub: string;
+    monthlyVolTitle: string;
+    monthlyVolSub: string;
+    applicationsLabel: string;
+    clearedLabel: string;
+    medicalLabel: string;
+    attestationLabel: string;
+    smartCardLabel: string;
+  };
+  partnerSettings: {
+    title: string;
+    subtitle: string;
+    fieldLabel: string;
+    saveBtn: string;
+    resetBtn: string;
+    savedNotice: string;
+  };
   labels: {
     searchCandidates: string;
     allCountries: string;
@@ -237,13 +302,52 @@ export interface Translations {
 
 export const TRANSLATIONS: Record<Locale, Translations> = {
   bn: {
-    allianceBrand: 'SILVER GROUP (BD) × HARA INTERNATIONAL (JP) × VIETNAM TEXTILE PARTNERS',
+    allianceBrand: 'SILVER GROUP × HARA INTERNATIONAL × QUYNH AN YARN CO., LTD',
     portalTitle: 'আন্তর্জাতিক জনশক্তি রপ্তানি',
-    portalSubtitle: 'সিলভার গ্রুপ (বাংলাদেশ) × হারা ইন্টারন্যাশনাল (জাপান) × ভিয়েতনাম টেক্সটাইল পার্টনার্স',
+    portalSubtitle: 'সিলভার গ্রুপ × হারা ইন্টারন্যাশনাল × কুইন আন ইয়ার্ন কোং লিমিটেড',
     collaborationPartners: {
-      bd: 'SILVER GROUP (BD)',
-      jp: 'HARA INTERNATIONAL (JP)',
-      vn: 'VIETNAM TEXTILE PARTNERS',
+      bd: 'SILVER GROUP',
+      jp: 'HARA INTERNATIONAL',
+      vn: 'QUYNH AN YARN CO., LTD',
+    },
+    allianceSpotlight: {
+      tapHint: 'হোভার বা ট্যাপ করে বিস্তারিত দেখুন',
+      hqLabel: 'সদর দপ্তর',
+      roleLabel: 'জোটের ভূমিকা',
+      verifiedLabel: 'যাচাইকৃত সনদ',
+      bd: {
+        country: 'বাংলাদেশ',
+        role: 'রিক্রুটমেন্ট ও বিএমইটি ডেস্ক',
+        shortSubtitle: 'রিক্রুটমেন্ট ও BMET ডেস্ক',
+        headquarters: 'ঢাকা',
+        credentialBadge: 'BMET অনুমোদিত প্রেরণকারী সংস্থা',
+        highlights: [
+          'প্রার্থী বাছাই, মেডিকেল ফিটনেস ও ইংরেজি/জাপানি স্ক্রিনিং',
+          'BMET স্মার্ট কার্ড, ফিঙ্গারপ্রিন্ট ও প্রি-ডিপার্চার ব্রিফিং',
+        ],
+      },
+      jp: {
+        country: 'জাপান',
+        role: 'দ্বিপাক্ষিক মান নিয়ন্ত্রণ ও ব্যবস্থাপনা',
+        shortSubtitle: 'দ্বিপাক্ষিক মান ও ব্যবস্থাপনা',
+        headquarters: 'টোকিও',
+        credentialBadge: 'RSK ও তদারকি অনুমোদিত সংস্থা',
+        highlights: [
+          'আন্তর্জাতিক নিয়োগ মানদণ্ড, COE এবং কর্মপরিবেশ অডিট',
+          'ত্রি-দেশীয় নিরাপত্তা ও বেতন স্বচ্ছতা তদারকি',
+        ],
+      },
+      vn: {
+        country: 'ভিয়েতনাম',
+        role: 'হুং ইয়েন ইয়ার্ন উৎপাদন কেন্দ্র',
+        shortSubtitle: 'হুং ইয়েন ইয়ার্ন ফ্যাক্টরি',
+        headquarters: 'হুং ইয়েন',
+        credentialBadge: 'আ মে গ্রাম, কুইন আন কমিউন প্ল্যান্ট',
+        highlights: [
+          'সরাসরি নিয়োগকর্তা ও আধুনিক স্পিনিং-ইয়ার্ন উৎপাদন লাইন',
+          'শতভাগ ফ্রি ডরমিটরি, শিফট মিল, বিদ্যুৎ ও যাতায়াত বাস',
+        ],
+      },
     },
     topNav: {
       home: 'হোম',
@@ -251,6 +355,12 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       legal: 'আইন ও বিএমইটি',
       faq: 'সাধারণ জিজ্ঞাসা',
       privacy: 'গোপনীয়তা নীতি',
+      contact: 'যোগাযোগ',
+    },
+    mobileNav: {
+      home: 'হোম',
+      demands: 'চাহিদা',
+      legal: 'বিএমইটি',
       contact: 'যোগাযোগ',
     },
     modeSwitch: {
@@ -282,6 +392,8 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     ],
     hero: {
       quotaPill: '১০টি শূন্যপদ খোলা • শুরু: ০৫ জানুয়ারি ২০২৭',
+      mainRecruiterLabel: 'প্রধান নিয়োগকর্তা · সরাসরি ফ্যাক্টরি',
+      mainRecruiterLocation: 'আ মে গ্রাম, কুইন আন কমিউন, হুং ইয়েন, ভিয়েতনাম',
       headline: 'ভিয়েতনাম ও জাপানে বৈধ ও সরাসরি কর্মসংস্থান',
       subline: 'বাংলাদেশ (BMET) · ভিয়েতনাম হাব · জাপান সুপারভাইজিং ডিরেক্ট রিক্রুটমেন্ট',
       applyNow: 'এখনই আবেদন করুন',
@@ -408,7 +520,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         badge: 'অফিশিয়াল ডেস্ক',
         title: 'ঢাকা, টোকিও ও হুং ইয়েন যোগাযোগ',
         bullets: [
-          'সিলভার গ্রুপ (ঢাকা), হারা ইন্টারন্যাশনাল (টোকিও) ও ভিয়েতনাম ডেস্ক',
+          'সিলভার গ্রুপ, হারা ইন্টারন্যাশনাল ও কুইন আন ইয়ার্ন কোং লিমিটেড',
           'সরাসরি অফিস ঠিকানা, ফোন, হোয়াটসঅ্যাপ ও ইমেইল তথ্য',
         ],
       },
@@ -452,7 +564,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         sections: [
           {
             heading: '১. তথ্য সংগ্রহ ও ব্যবহার',
-            body: 'আবেদনকারীর নাম, ফোন নম্বর, পাসপোর্ট নম্বর, শারীরিক পরিমাপ এবং ডকুমেন্ট কেবল সিলভার গ্রুপ (বাংলাদেশ), ভিয়েতনাম টেক্সটাইল পার্টনার্স ও হারা ইন্টারন্যাশনাল (জাপান)-এর অনুমোদিত নিয়োগ যাচাই ও দূতাবাস/BMET ফাইলিংয়ে ব্যবহৃত হয়।',
+            body: 'আবেদনকারীর নাম, ফোন নম্বর, পাসপোর্ট নম্বর, শারীরিক পরিমাপ এবং ডকুমেন্ট কেবল সিলভার গ্রুপ, কুইন আন ইয়ার্ন কোং লিমিটেড ও হারা ইন্টারন্যাশনাল-এর অনুমোদিত নিয়োগ যাচাই ও দূতাবাস/BMET ফাইলিংয়ে ব্যবহৃত হয়।',
           },
           {
             heading: '২. তৃতীয় পক্ষের কাছে বিক্রয় নিষিদ্ধ',
@@ -473,7 +585,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         subtitle: 'বাংলাদেশ, জাপান ও ভিয়েতনামের অনুমোদিত কোঅর্ডিনেশন কেন্দ্র',
         desks: [
           {
-            country: 'BANGLADESH (DHAKA HUB)',
+            country: 'বাংলাদেশ · ঢাকা হাব',
             org: 'Silver Group — BMET Licensed Sending Hub',
             address: 'গুলশান–বনানী / উত্তরা রিক্রুটমেন্ট কমপ্লেক্স, ঢাকা, বাংলাদেশ',
             phone: '+880 1700-000000 (WhatsApp / Voice)',
@@ -481,15 +593,15 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
             hours: 'রবিবার – বৃহস্পতিবার · ০৯:০০ – ২১:০০ BST',
           },
           {
-            country: 'VIETNAM (HUNG YEN & HANOI)',
-            org: 'Vietnam Textile Partners — Plant Coordination',
-            address: 'ফো নোই ইন্ডাস্ট্রিয়াল জোন, হুং ইয়েন প্রদেশ, ভিয়েতনাম',
+            country: 'ভিয়েতনাম · হুং ইয়েন ও হ্যানয়',
+            org: 'Quynh An Yarn Co., Ltd — A Me Village Plant Desk',
+            address: 'আ মে গ্রাম, কুইন আন কমিউন, হুং ইয়েন প্রদেশ, ভিয়েতনাম',
             phone: '+84 24-3900-0000',
             email: 'vn-desk@hr.handsandhead.com',
             hours: 'সোমবার – শনিবার · ০৮:৩০ – ১৭:৩০ ICT',
           },
           {
-            country: 'JAPAN (TOKYO & OSAKA)',
+            country: 'জাপান · টোকিও ও ওসাকা',
             org: 'Hara International — Supervising & RSK Organization',
             address: 'চিয়োদা-কু, টোকিও ১০১-০০৪৭, জাপান',
             phone: '+81 3-5000-0000',
@@ -501,15 +613,27 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     },
     footer: {
       brandTitle: 'আন্তর্জাতিক জনশক্তি রপ্তানি',
+      allianceHeading: 'সক্রিয় ত্রি-দেশীয় কৌশলগত জোট (লাইভ করিডোর)',
       ethicalNotice:
         'শূন্য-প্রতারণা নৈতিক নিয়োগ ও শতভাগ BMET স্মার্ট কার্ড অনুমোদিত করিডোর। কোনো অননুমোদিত মধ্যস্বত্বভোগীর কাছে আর্থিক লেনদেন করবেন না।',
       quickLinksHeading: 'গুরুত্বপূর্ণ লিংক',
       privacyHeading: 'তথ্য ও ডকুমেন্ট গোপনীয়তা',
       privacySummary:
         'পাসপোর্ট, NID ও মেডিকেল রিপোর্ট এনক্রিপ্টেড অবস্থায় থাকে এবং কেবল অনুমোদিত ভিসা, দূতাবাস সত্যায়ন ও BMET প্রক্রিয়াকরণে ব্যবহৃত হয়।',
-      copyright: '© ২০২৬ আন্তর্জাতিক জনশক্তি রপ্তানি · Silver Group × Hara International × Vietnam Textile Partners',
+      copyright: '© ২০২৬ আন্তর্জাতিক জনশক্তি রপ্তানি · Silver Group × Hara International × Quynh An Yarn Co., Ltd',
       techProviderLabel: 'প্রযুক্তি সরবরাহকারী:',
-      techProviderName: 'Hands & Head (handsandhead.com)',
+      techProviderName: 'HANDS & HEAD',
+      techProviderCard: {
+        badge: 'TECHNOLOGY PROVIDER · কোর প্ল্যাটফর্ম আর্কিটেকচার',
+        title: 'HANDS & HEAD',
+        subtitle: 'ত্রি-দেশীয় আন্তর্জাতিক জনশক্তি রপ্তানি ও ডিজিটাল সিঙ্ক প্রযুক্তি অংশীদার',
+        websiteUrl: 'https://handsandhead.com',
+        features: [
+          'অফলাইন-রেজিলিয়েন্ট IndexedDB + রিয়েল-টাইম সার্ভার সিঙ্ক ইঞ্জিন',
+          '৪-ধাপের স্মার্ট আবেদন উইজার্ড ও ৭-ধাপের লাইভ পাইপলাইন ট্র্যাকার',
+          'BMET স্মার্ট কার্ড, COE সত্যায়ন ও কোটা লক অটোমেশন সিস্টেম',
+        ],
+      },
     },
     matrix: {
       sectionLabel: 'ভিয়েতনাম ইয়ার্ন ফ্যাক্টরি ডিম্যান্ড • HUNG YEN',
@@ -622,6 +746,16 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         'BMET স্মার্ট কার্ড, ফিঙ্গারপ্রিন্ট ও প্রি-ডিপার্চার ওরিয়েন্টেশন',
         'মেডিকেল ফিটনেস (সংক্রামক, হৃদরোগ ও স্নায়বিক রোগমুক্ত)',
       ],
+      liveSearchHeading: 'লাইভ ওয়েব সোর্স আপডেট (Google Search)',
+      liveSearchSubheading: 'অফিশিয়াল BMET ও ভিয়েতনাম শ্রম আইন তথ্য সরাসরি খুঁজুন',
+      liveBtnBmet: 'BMET সত্যায়ন নীতি',
+      liveBtnVietnam: 'ভিয়েতনাম শ্রম আইন আপডেট',
+      liveSearchPlaceholder: 'আইনি প্রশ্ন লিখুন (যেমন: BMET স্মার্ট কার্ড ফি, ভিয়েতনাম ওভারটাইম নিয়ম)...',
+      liveSearchBtn: 'অনুসন্ধান',
+      liveSearching: 'অফিশিয়াল ওয়েব সোর্স যাচাই হচ্ছে...',
+      liveSourcesLabel: 'যাচাইকৃত ওয়েব সূত্রসমূহ',
+      liveSearchedAtLabel: 'সর্বশেষ আপডেট',
+      liveDisclaimer: 'তথ্যসমূহ সরাসরি লাইভ Google Search গ্রাউন্ডিং থেকে সংগৃহীত।',
       close: 'বন্ধ করুন',
     },
     wizard: {
@@ -710,7 +844,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     corridors: {
       heading: 'ত্রি-দেশীয় কমান্ড সেন্টার',
       bangladeshSub: 'সিলভার গ্রুপ — ঢাকা ও চট্টগ্রাম হাব',
-      vietnamSub: 'ভিয়েতনাম পার্টনার — হ্যানয় ও হুং ইয়েন',
+      vietnamSub: 'কুইন আন ইয়ার্ন কোং লিমিটেড — হুং ইয়েন ও হ্যানয়',
       japanSub: 'হারা ইন্টারন্যাশনাল — টোকিও, ওসাকা ও নাগোয়া',
     },
     stages: {
@@ -721,6 +855,27 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       'COE / Embassy Attestation': '৫. COE / দূতাবাস সত্যায়ন',
       'BMET Smart Card': '৬. BMET স্মার্ট কার্ড',
       Deployed: '৭. ডিপ্লয়েড',
+    },
+    trends: {
+      heading: 'রিক্রুটমেন্ট ট্রেন্ডস ড্যাশবোর্ড',
+      subheading: 'প্রার্থীদের ধাপভিত্তিক বণ্টন এবং মাসিক আবেদন প্রক্রিয়াকরণের হার',
+      stageDistTitle: 'ধাপ অনুযায়ী প্রার্থী বণ্টন',
+      stageDistSub: 'মেডিকেল, সত্যায়ন (COE) ও BMET স্মার্ট কার্ড ফোকাস',
+      monthlyVolTitle: 'মাসিক প্রক্রিয়াকৃত চাকরির আবেদন',
+      monthlyVolSub: 'জমাকৃত আবেদন বনাম সম্পন্ন ক্লিয়ারেন্স ট্রেন্ড',
+      applicationsLabel: 'প্রাপ্ত আবেদন',
+      clearedLabel: 'প্রক্রিয়াকৃত',
+      medicalLabel: 'মেডিকেল ফিট',
+      attestationLabel: 'সত্যায়ন / COE',
+      smartCardLabel: 'স্মার্ট কার্ড',
+    },
+    partnerSettings: {
+      title: 'ভিয়েতনাম ফ্যাক্টরি পার্টনার নাম সেটিংস',
+      subtitle: 'পাবলিক হেডার অ্যালায়েন্স বার, পার্টনার কার্ড এবং ডিম্যান্ড শিটে প্রদর্শিত ভিয়েতনাম কোম্পানির নাম পরিবর্তন করুন',
+      fieldLabel: 'ভিয়েতনাম পার্টনার কোম্পানির নাম',
+      saveBtn: 'নাম সংরক্ষণ করুন',
+      resetBtn: 'ডিফল্ট রিসেট',
+      savedNotice: 'পার্টনার নাম আপডেট ও সিঙ্ক হয়েছে',
     },
     labels: {
       searchCandidates: 'নাম, ট্র্যাকিং আইডি, ফোন বা ট্রেড লিখুন...',
@@ -744,13 +899,52 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     },
   },
   ja: {
-    allianceBrand: 'SILVER GROUP (BD) × HARA INTERNATIONAL (JP) × VIETNAM TEXTILE PARTNERS',
+    allianceBrand: 'SILVER GROUP × HARA INTERNATIONAL × QUYNH AN YARN CO., LTD',
     portalTitle: '国際人材送り出しポータル',
-    portalSubtitle: 'Silver Group (BD) × 原インターナショナル (JP) × Vietnam Textile Partners',
+    portalSubtitle: 'Silver Group × 原インターナショナル × Quynh An Yarn Co., Ltd',
     collaborationPartners: {
-      bd: 'SILVER GROUP (BD)',
-      jp: 'HARA INTERNATIONAL (JP)',
-      vn: 'VIETNAM TEXTILE PARTNERS',
+      bd: 'SILVER GROUP',
+      jp: 'HARA INTERNATIONAL',
+      vn: 'QUYNH AN YARN CO., LTD',
+    },
+    allianceSpotlight: {
+      tapHint: 'ホバーまたはタップで詳細表示',
+      hqLabel: '本部所在地',
+      roleLabel: 'アライアンス役割',
+      verifiedLabel: '認証ステータス',
+      bd: {
+        country: 'バングラデシュ',
+        role: '採用募集・BMET申請デスク',
+        shortSubtitle: '採用・BMET申請デスク',
+        headquarters: 'ダッカ',
+        credentialBadge: 'BMET 公認送出機関ハブ',
+        highlights: [
+          '候補者募集・身体適性審査・英語／日本語プレチェック',
+          'BMETスマートカード発給・指紋登録・出国前講習を統括',
+        ],
+      },
+      jp: {
+        country: '日本',
+        role: '二国間品質管理・監理統括',
+        shortSubtitle: '二国間品質・監理統括',
+        headquarters: '東京',
+        credentialBadge: '公認監理団体・登録支援機関',
+        highlights: [
+          '国際雇用コンプライアンス監査・COE申請・企業マッチング',
+          '3カ国共通の賃金透明性・労働安全基準を監督',
+        ],
+      },
+      vn: {
+        country: 'ベトナム',
+        role: 'フンイエン紡績工場・受入拠点',
+        shortSubtitle: 'フンイエン紡績工場',
+        headquarters: 'フンイエン',
+        credentialBadge: 'A Me村 Quynh An社 工場施設',
+        highlights: [
+          '近代的紡績ライン直接雇用・就労ビザ現地調整',
+          '工場隣接寮・光熱費・交代食・送迎バス100%無料提供',
+        ],
+      },
     },
     topNav: {
       home: 'ホーム',
@@ -759,6 +953,12 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       faq: 'よくある質問',
       privacy: '個人情報保護',
       contact: 'お問い合わせ',
+    },
+    mobileNav: {
+      home: 'ホーム',
+      demands: '求人',
+      legal: '法規',
+      contact: '連絡先',
     },
     modeSwitch: {
       toAdmin: '管理センター',
@@ -789,6 +989,8 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     ],
     hero: {
       quotaPill: '10名募集中 • 開始予定: 2027年1月5日',
+      mainRecruiterLabel: '受入直接採用企業 · 本社工場',
+      mainRecruiterLocation: 'ベトナム・フンイエン省 Quynh An 地区 A Me 村',
       headline: 'ベトナム・日本への公的・直接雇用ポータル',
       subline: 'バングラデシュ (BMET) · ベトナム拠点 · 日本監理団体 連携採用',
       applyNow: '今すぐ応募する',
@@ -915,7 +1117,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         badge: '拠点連絡先',
         title: 'ダッカ・東京・フンイエン連絡窓口',
         bullets: [
-          'Silver Group (BD)・原インターナショナル (JP)・VN拠点',
+          'Silver Group・原インターナショナル・Quynh An Yarn Co., Ltd',
           '各拠点の住所・電話番号・メールアドレス・営業時間',
         ],
       },
@@ -959,7 +1161,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         sections: [
           {
             heading: '1. 収集データの利用目的',
-            body: '氏名、連絡先、身体データ、添付書類は、Silver Group（BD）、Vietnam Textile Partners、原インターナショナル（JP）による適性審査・大使館公証・BMET手続きのみに利用されます。',
+            body: '氏名、連絡先、身体データ、添付書類は、Silver Group、Quynh An Yarn Co., Ltd、原インターナショナルによる適性審査・大使館公証・BMET手続きのみに利用されます。',
           },
           {
             heading: '2. 第三者提供の禁止',
@@ -980,7 +1182,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         subtitle: 'バングラデシュ・ベトナム・日本の公式調整デスク',
         desks: [
           {
-            country: 'BANGLADESH (DHAKA HUB)',
+            country: 'バングラデシュ · ダッカ',
             org: 'Silver Group — BMET Licensed Sending Hub',
             address: 'Dhaka Recruitment Complex, Dhaka, Bangladesh',
             phone: '+880 1700-000000',
@@ -988,15 +1190,15 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
             hours: 'Sun – Thu · 09:00 – 21:00 BST',
           },
           {
-            country: 'VIETNAM (HUNG YEN & HANOI)',
-            org: 'Vietnam Textile Partners — Plant Coordination',
-            address: 'Pho Noi Industrial Zone, Hung Yen Province, Vietnam',
+            country: 'ベトナム · フンイエン',
+            org: 'Quynh An Yarn Co., Ltd — Hung Yen Yarn Plant',
+            address: 'A Me Village, Quynh An Commune, Hung Yen Province, Vietnam',
             phone: '+84 24-3900-0000',
             email: 'vn-desk@hr.handsandhead.com',
             hours: 'Mon – Sat · 08:30 – 17:30 ICT',
           },
           {
-            country: 'JAPAN (TOKYO & OSAKA)',
+            country: '日本 · 東京・大阪',
             org: 'Hara International — Supervising & RSK Organization',
             address: 'Chiyoda-ku, Tokyo 101-0047, Japan',
             phone: '+81 3-5000-0000',
@@ -1008,15 +1210,27 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     },
     footer: {
       brandTitle: '国際人材送り出しポータル',
+      allianceHeading: '3カ国公式アライアンス連携ネットワーク (稼働中)',
       ethicalNotice:
         '不正仲介ゼロの倫理的採用およびBMETスマートカード完全準拠ルート。非公式な仲介者への金銭支払いは絶対に行わないでください。',
       quickLinksHeading: 'クイックリンク',
       privacyHeading: '個人情報・書類セキュリティ',
       privacySummary:
         'パスポート・NID・健康診断記録は暗号化され、認定された海外雇用・査証・BMET申請処理にのみ使用されます。',
-      copyright: '© 2026 HUMAN RESOURCE EXPORT · Silver Group × Hara International × Vietnam Textile Partners',
+      copyright: '© 2026 HUMAN RESOURCE EXPORT · Silver Group × Hara International × Quynh An Yarn Co., Ltd',
       techProviderLabel: 'Technology Provider:',
-      techProviderName: 'Hands & Head (handsandhead.com)',
+      techProviderName: 'HANDS & HEAD',
+      techProviderCard: {
+        badge: 'TECHNOLOGY PROVIDER · CORE PLATFORM ENGINE',
+        title: 'HANDS & HEAD',
+        subtitle: '3カ国間・国際人材送り出し＆リアルタイム選考管理プラットフォーム提供企業',
+        websiteUrl: 'https://handsandhead.com',
+        features: [
+          'オフライン耐性 IndexedDB × リアルタイム・サーバー自動同期基盤',
+          '4ステップ適性診断応募ウィザード＆7段階ライブ選考トラッカー',
+          'BMETスマートカード・COE公証・採用枠自動ロック管理システム',
+        ],
+      },
     },
     matrix: {
       sectionLabel: 'ベトナム紡績工場 求人案件 • HUNG YEN',
@@ -1129,6 +1343,16 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         'BMETスマートカード発行・指紋登録・出国前講習',
         '指定医療機関での健康診断合格（感染症・心疾患等なし）',
       ],
+      liveSearchHeading: '公式Webライブ検索 (Google Search)',
+      liveSearchSubheading: '最新のBMET認証規定・ベトナム労働法情報を公的Webソースから検索',
+      liveBtnBmet: 'BMET認証ガイドライン',
+      liveBtnVietnam: 'ベトナム労働法最新規定',
+      liveSearchPlaceholder: '法規や手続きに関する質問を入力...',
+      liveSearchBtn: '検索実行',
+      liveSearching: '公式Webソースを検索中...',
+      liveSourcesLabel: '参照元Webソース',
+      liveSearchedAtLabel: '取得日時',
+      liveDisclaimer: 'Google Searchグラウンディング経由のリアルタイム公式要約です。',
       close: '閉じる',
     },
     wizard: {
@@ -1217,7 +1441,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     corridors: {
       heading: '3カ国連携コマンドセンター',
       bangladeshSub: 'Silver Group — ダッカ・チッタゴン拠点',
-      vietnamSub: 'Vietnam Partner — ハノイ・フンイエン拠点',
+      vietnamSub: 'Quynh An Yarn Co., Ltd — フンイエン・ハノイ拠点',
       japanSub: '原インターナショナル — 東京・大阪・名古屋',
     },
     stages: {
@@ -1228,6 +1452,27 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       'COE / Embassy Attestation': '5. COE・大使館認証',
       'BMET Smart Card': '6. BMETカード発給',
       Deployed: '7. 渡航・配属完了',
+    },
+    trends: {
+      heading: '採用トレンドダッシュボード',
+      subheading: '選考段階別（健康診断・認証・BMETカード）の分布と月次応募処理件数',
+      stageDistTitle: 'ステージ別候補者分布',
+      stageDistSub: '健康診断・大使館/COE認証・スマートカード状況',
+      monthlyVolTitle: '月別処理済み応募数推移',
+      monthlyVolSub: '新規受付と審査完了数の比較トレンド',
+      applicationsLabel: '受付件数',
+      clearedLabel: '処理完了',
+      medicalLabel: '健康診断適合',
+      attestationLabel: 'COE・認証中',
+      smartCardLabel: 'BMETカード',
+    },
+    partnerSettings: {
+      title: 'ベトナム提携企業名設定',
+      subtitle: 'ヘッダー連携バー・拠点カード・求人票に表示されるベトナム工場パートナー名を編集します',
+      fieldLabel: 'ベトナム工場パートナー名',
+      saveBtn: '名称を保存',
+      resetBtn: '初期値に戻す',
+      savedNotice: 'パートナー名を更新・同期しました',
     },
     labels: {
       searchCandidates: '氏名、追跡ID、電話番号、職種で検索...',
@@ -1251,13 +1496,52 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     },
   },
   en: {
-    allianceBrand: 'SILVER GROUP (BD) × HARA INTERNATIONAL (JP) × VIETNAM TEXTILE PARTNERS',
+    allianceBrand: 'SILVER GROUP × HARA INTERNATIONAL × QUYNH AN YARN CO., LTD',
     portalTitle: 'HUMAN RESOURCE EXPORT',
-    portalSubtitle: 'Silver Group (Bangladesh) × Hara International (Japan) × Vietnam Textile Partners',
+    portalSubtitle: 'Silver Group × Hara International × Quynh An Yarn Co., Ltd',
     collaborationPartners: {
-      bd: 'SILVER GROUP (BD)',
-      jp: 'HARA INTERNATIONAL (JP)',
-      vn: 'VIETNAM TEXTILE PARTNERS',
+      bd: 'SILVER GROUP',
+      jp: 'HARA INTERNATIONAL',
+      vn: 'QUYNH AN YARN CO., LTD',
+    },
+    allianceSpotlight: {
+      tapHint: 'Hover or tap partner to inspect credentials',
+      hqLabel: 'Headquarters',
+      roleLabel: 'Alliance Role',
+      verifiedLabel: 'Verified Credential',
+      bd: {
+        country: 'Bangladesh',
+        role: 'Recruitment & BMET Desk',
+        shortSubtitle: 'Recruitment & BMET Desk',
+        headquarters: 'Dhaka',
+        credentialBadge: 'BMET Licensed Sending Hub',
+        highlights: [
+          'Candidate sourcing, physical & medical verification in Dhaka',
+          'BMET Smart Card biometrics, attestation & departure briefing',
+        ],
+      },
+      jp: {
+        country: 'Japan',
+        role: 'Bilateral Quality & Management',
+        shortSubtitle: 'Bilateral Quality & Management',
+        headquarters: 'Tokyo',
+        credentialBadge: 'Supervising & RSK Accredited',
+        highlights: [
+          'Tri-national compliance auditing, COE filing & employer governance',
+          'Enforces wage transparency & international workplace safety',
+        ],
+      },
+      vn: {
+        country: 'Vietnam',
+        role: 'Hung Yen Yarn Facility',
+        shortSubtitle: 'Hung Yen Yarn Facility',
+        headquarters: 'Hung Yen',
+        credentialBadge: 'A Me Village · Quynh An Commune Plant',
+        highlights: [
+          'Direct industrial yarn spinning employer with 24-month work permits',
+          '100% free dormitory, shift meals, utilities & shuttle bus transport',
+        ],
+      },
     },
     topNav: {
       home: 'Home',
@@ -1265,6 +1549,12 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       legal: 'BMET & Legal',
       faq: 'FAQ',
       privacy: 'Privacy Policy',
+      contact: 'Contact',
+    },
+    mobileNav: {
+      home: 'Home',
+      demands: 'Demands',
+      legal: 'Legal',
       contact: 'Contact',
     },
     modeSwitch: {
@@ -1289,13 +1579,15 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       },
       {
         kicker: 'TRI-NATIONAL VOCATIONAL DEPLOYMENT CORRIDOR',
-        headline: 'SILVER GROUP BD × HARA INTERNATIONAL JP × VIETNAM PARTNERS',
+        headline: 'SILVER GROUP × HARA INTERNATIONAL × QUYNH AN YARN CO., LTD',
         subline: 'BMET Smart Card Cleared · Embassy Attested Demand · Direct Bank Payout',
-        highlightBadge: 'BD × JP × VN VERIFIED CORRIDOR',
+        highlightBadge: 'TRI-NATIONAL VERIFIED CORRIDOR',
       },
     ],
     hero: {
       quotaPill: '10 VACANCIES OPEN • START DATE: 05 JAN 2027',
+      mainRecruiterLabel: 'MAIN RECRUITER · DIRECT EMPLOYER',
+      mainRecruiterLocation: 'A Me Village, Quynh An Commune, Hung Yen, Vietnam',
       headline: 'DIRECT & LEGAL EMPLOYMENT IN VIETNAM & JAPAN',
       subline: 'Bangladesh (BMET) · Vietnam Hub · Japan Supervising Direct Corridor',
       applyNow: 'APPLY NOW',
@@ -1422,7 +1714,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         badge: 'PARTNER DESKS',
         title: 'Dhaka, Tokyo & Hung Yen Coordination Desks',
         bullets: [
-          'Silver Group (BD), Hara International (JP) & Vietnam Textile Partners',
+          'Silver Group, Hara International & Quynh An Yarn Co., Ltd',
           'Direct office addresses, WhatsApp, email & operating hours',
         ],
       },
@@ -1466,7 +1758,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         sections: [
           {
             heading: '1. Purpose-Limited Processing',
-            body: 'Personal details, physical metrics, and identity files are processed exclusively by Silver Group (BD), Vietnam Textile Partners, and Hara International (JP) for candidate screening, embassy attestation, and BMET clearance.',
+            body: 'Personal details, physical metrics, and identity files are processed exclusively by Silver Group, Quynh An Yarn Co., Ltd, and Hara International for candidate screening, embassy attestation, and BMET clearance.',
           },
           {
             heading: '2. Zero Unauthorized Sharing',
@@ -1487,7 +1779,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         subtitle: 'Tri-national coordination offices across Bangladesh, Vietnam & Japan',
         desks: [
           {
-            country: 'BANGLADESH (DHAKA HUB)',
+            country: 'Bangladesh · Dhaka Hub',
             org: 'Silver Group — BMET Licensed Sending Hub',
             address: 'Gulshan–Banani / Uttara Recruitment Complex, Dhaka, Bangladesh',
             phone: '+880 1700-000000 (WhatsApp / Voice)',
@@ -1495,15 +1787,15 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
             hours: 'Sun – Thu · 09:00 – 21:00 BST',
           },
           {
-            country: 'VIETNAM (HUNG YEN & HANOI)',
-            org: 'Vietnam Textile Partners — Plant Coordination',
-            address: 'Pho Noi Industrial Zone, Hung Yen Province, Vietnam',
+            country: 'Vietnam · Hung Yen & Hanoi',
+            org: 'Quynh An Yarn Co., Ltd — Plant Coordination',
+            address: 'A Me Village, Quynh An Commune, Hung Yen Province, Vietnam',
             phone: '+84 24-3900-0000',
             email: 'vn-desk@hr.handsandhead.com',
             hours: 'Mon – Sat · 08:30 – 17:30 ICT',
           },
           {
-            country: 'JAPAN (TOKYO & OSAKA)',
+            country: 'Japan · Tokyo & Osaka',
             org: 'Hara International — Supervising & RSK Organization',
             address: 'Chiyoda-ku, Tokyo 101-0047, Japan',
             phone: '+81 3-5000-0000',
@@ -1515,15 +1807,27 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     },
     footer: {
       brandTitle: 'HUMAN RESOURCE EXPORT',
+      allianceHeading: 'TRI-NATIONAL STRATEGIC ALLIANCE (ACTIVE CORRIDOR)',
       ethicalNotice:
         'Zero-fraud ethical recruitment and full BMET Smart Card compliance. Never make payments to unauthorized middlemen outside verified partner desks.',
       quickLinksHeading: 'Quick Links',
       privacyHeading: 'Privacy & Data Security',
       privacySummary:
         'Passport, NID, and medical records are encrypted and used strictly for verified overseas employment, embassy attestation, and BMET processing.',
-      copyright: '© 2026 HUMAN RESOURCE EXPORT · Silver Group × Hara International × Vietnam Textile Partners',
+      copyright: '© 2026 HUMAN RESOURCE EXPORT · Silver Group × Hara International × Quynh An Yarn Co., Ltd',
       techProviderLabel: 'Technology Provider:',
-      techProviderName: 'Hands & Head (handsandhead.com)',
+      techProviderName: 'HANDS & HEAD',
+      techProviderCard: {
+        badge: 'TECHNOLOGY PROVIDER · PLATFORM ARCHITECTURE',
+        title: 'HANDS & HEAD',
+        subtitle: 'Enterprise Cross-Border Workforce Deployment & Real-Time Sync Engineering',
+        websiteUrl: 'https://handsandhead.com',
+        features: [
+          'Offline-resilient IndexedDB vault paired with live multi-hub sync',
+          '4-step automated eligibility wizard & 7-stage BMET pipeline tracker',
+          'Embassy attestation audit trail & atomic deployment quota locking',
+        ],
+      },
     },
     matrix: {
       sectionLabel: 'ACTIVE DEMAND: VIETNAM YARN FACTORY • HUNG YEN',
@@ -1636,6 +1940,16 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         'BMET Smart Card issuance, biometric clearance & briefing',
         'Designated medical fitness (zero infectious, cardiac, or neuro risk)',
       ],
+      liveSearchHeading: 'LIVE WEB REGULATORY LOOKUP (GOOGLE SEARCH)',
+      liveSearchSubheading: 'Query real-time official BMET attestation & Vietnam Labor Code updates',
+      liveBtnBmet: 'BMET Attestation Rules',
+      liveBtnVietnam: 'Vietnam Labor Code Updates',
+      liveSearchPlaceholder: 'Ask about BMET Smart Card clearance, Vietnam overtime limits...',
+      liveSearchBtn: 'SEARCH WEB',
+      liveSearching: 'Querying live official web sources...',
+      liveSourcesLabel: 'Official Web Grounding Sources',
+      liveSearchedAtLabel: 'Retrieved',
+      liveDisclaimer: 'Grounded in real-time Google Search results from web sources.',
       close: 'CLOSE',
     },
     wizard: {
@@ -1724,7 +2038,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     corridors: {
       heading: 'TRI-NATIONAL COMMAND CENTER',
       bangladeshSub: 'Silver Group — Dhaka & Chattogram Hubs',
-      vietnamSub: 'Vietnam Partner — Hanoi & Hung Yen Hubs',
+      vietnamSub: 'Quynh An Yarn Co., Ltd — Hung Yen & Hanoi Hubs',
       japanSub: 'Hara International — Tokyo, Osaka & Nagoya',
     },
     stages: {
@@ -1735,6 +2049,27 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       'COE / Embassy Attestation': '5. COE / Embassy Attestation',
       'BMET Smart Card': '6. BMET Smart Card',
       Deployed: '7. Deployed',
+    },
+    trends: {
+      heading: 'RECRUITMENT TRENDS',
+      subheading: 'Candidate distribution across Medical, Attestation & Smart Card stages plus monthly application volume',
+      stageDistTitle: 'Candidate Distribution by Stage',
+      stageDistSub: 'Live focus on Medical Fit, COE Attestation & BMET Smart Card',
+      monthlyVolTitle: 'Monthly Processed Applications',
+      monthlyVolSub: 'Received vs. cleared dossier throughput across months',
+      applicationsLabel: 'Applications',
+      clearedLabel: 'Processed / Cleared',
+      medicalLabel: 'Medical Fit',
+      attestationLabel: 'Attestation / COE',
+      smartCardLabel: 'Smart Card',
+    },
+    partnerSettings: {
+      title: 'VIETNAM FACILITY PARTNER SETTINGS',
+      subtitle: 'Customize the Vietnam partner company name displayed across the Alliance Bar, Partner Hubs, and Demand headers',
+      fieldLabel: 'Vietnam Factory Partner Name',
+      saveBtn: 'Save Partner Name',
+      resetBtn: 'Reset Default',
+      savedNotice: 'Partner name updated & synced across portal',
     },
     labels: {
       searchCandidates: 'Search by name, Tracking ID, phone, or sector...',
@@ -1758,13 +2093,52 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     },
   },
   vi: {
-    allianceBrand: 'SILVER GROUP (BD) × HARA INTERNATIONAL (JP) × VIETNAM TEXTILE PARTNERS',
+    allianceBrand: 'SILVER GROUP × HARA INTERNATIONAL × QUYNH AN YARN CO., LTD',
     portalTitle: 'XUẤT KHẨU NHÂN LỰC QUỐC TẾ',
-    portalSubtitle: 'Silver Group (Bangladesh) × Hara International (Nhật Bản) × Vietnam Textile Partners',
+    portalSubtitle: 'Silver Group × Hara International × Quynh An Yarn Co., Ltd',
     collaborationPartners: {
-      bd: 'SILVER GROUP (BD)',
-      jp: 'HARA INTERNATIONAL (JP)',
-      vn: 'VIETNAM TEXTILE PARTNERS',
+      bd: 'SILVER GROUP',
+      jp: 'HARA INTERNATIONAL',
+      vn: 'QUYNH AN YARN CO., LTD',
+    },
+    allianceSpotlight: {
+      tapHint: 'Di chuột hoặc chạm để xem chi tiết đối tác',
+      hqLabel: 'Trụ sở chính',
+      roleLabel: 'Vai trò liên minh',
+      verifiedLabel: 'Chứng nhận xác thực',
+      bd: {
+        country: 'Bangladesh',
+        role: 'Tuyển dụng & Văn phòng BMET',
+        shortSubtitle: 'Tuyển dụng & BMET Desk',
+        headquarters: 'Dhaka',
+        credentialBadge: 'Tổ chức phái cử được BMET cấp phép',
+        highlights: [
+          'Sàng lọc ứng viên, kiểm tra thể lực và ngoại ngữ tại Dhaka',
+          'Cấp thẻ thông minh BMET, sinh trắc học và định hướng trước bay',
+        ],
+      },
+      jp: {
+        country: 'Nhật Bản',
+        role: 'Quản lý chất lượng & Điều phối song phương',
+        shortSubtitle: 'Quản lý chất lượng song phương',
+        headquarters: 'Tokyo',
+        credentialBadge: 'Nghiệp đoàn giám sát & RSK chuẩn Nhật',
+        highlights: [
+          'Kiểm soát chất lượng tuyển dụng, hồ sơ COE và an toàn lao động',
+          'Giám sát minh bạch tiền lương giữa 3 quốc gia',
+        ],
+      },
+      vn: {
+        country: 'Việt Nam',
+        role: 'Nhà máy Sợi Hưng Yên',
+        shortSubtitle: 'Nhà máy Sợi Hưng Yên',
+        headquarters: 'Hưng Yên',
+        credentialBadge: 'Thôn A Mễ · Xã Quỳnh An, Hưng Yên',
+        highlights: [
+          'Nhà máy sản xuất sợi trực tiếp tuyển dụng hợp đồng 24 tháng',
+          'Miễn phí 100% ký túc xá, cơm ca, điện nước và xe đưa đón',
+        ],
+      },
     },
     topNav: {
       home: 'Trang chủ',
@@ -1772,6 +2146,12 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       legal: 'Pháp lý & BMET',
       faq: 'Hỏi đáp',
       privacy: 'Bảo mật',
+      contact: 'Liên hệ',
+    },
+    mobileNav: {
+      home: 'Trang chủ',
+      demands: 'Đơn tuyển',
+      legal: 'Pháp lý',
       contact: 'Liên hệ',
     },
     modeSwitch: {
@@ -1796,13 +2176,15 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       },
       {
         kicker: 'HÀNH LANG ĐÀO TẠO & PHÁI CỬ 3 QUỐC GIA',
-        headline: 'SILVER GROUP BD × HARA INTERNATIONAL JP × ĐỐI TÁC VIỆT NAM',
+        headline: 'SILVER GROUP × HARA INTERNATIONAL × QUYNH AN YARN CO., LTD',
         subline: 'Chứng thực Đại sứ quán & BMET · Chuyển khoản lương minh bạch',
-        highlightBadge: 'BD × JP × VN VERIFIED CORRIDOR',
+        highlightBadge: 'TRI-NATIONAL VERIFIED CORRIDOR',
       },
     ],
     hero: {
       quotaPill: 'ĐANG MỞ 10 CHỈ TIÊU • KHỞI HÀNH: 05/01/2027',
+      mainRecruiterLabel: 'ĐƠN VỊ TUYỂN DỤNG CHÍNH · NHÀ MÁY TRỰC TIẾP',
+      mainRecruiterLocation: 'Thôn A Mễ, Xã Quỳnh An, Tỉnh Hưng Yên, Việt Nam',
       headline: 'VIỆC LÀM HỢP PHÁP TRỰC TIẾP TẠI VIỆT NAM & NHẬT BẢN',
       subline: 'Bangladesh (BMET) · Trung tâm Việt Nam · Nghiệp đoàn Nhật Bản',
       applyNow: 'NỘP HỒ SƠ NGAY',
@@ -1929,7 +2311,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         badge: 'VĂN PHÒNG ĐẠI DIỆN',
         title: 'Liên hệ Dhaka, Tokyo & Hưng Yên',
         bullets: [
-          'Silver Group (BD), Hara International (JP) & Đối tác Việt Nam',
+          'Silver Group, Hara International & Quynh An Yarn Co., Ltd',
           'Địa chỉ văn phòng, WhatsApp, email & giờ làm việc',
         ],
       },
@@ -1973,7 +2355,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         sections: [
           {
             heading: '1. Phạm vi sử dụng dữ liệu',
-            body: 'Thông tin cá nhân, chỉ số thể lực và tài liệu đính kèm chỉ được xử lý bởi Silver Group (BD), Vietnam Textile Partners và Hara International (JP) cho công tác xét duyệt, chứng thực Đại sứ quán và BMET.',
+            body: 'Thông tin cá nhân, chỉ số thể lực và tài liệu đính kèm chỉ được xử lý bởi Silver Group, Quynh An Yarn Co., Ltd và Hara International cho công tác xét duyệt, chứng thực Đại sứ quán và BMET.',
           },
           {
             heading: '2. Không chia sẻ trái phép',
@@ -1994,7 +2376,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         subtitle: 'Văn phòng điều phối 3 quốc gia: Bangladesh, Việt Nam & Nhật Bản',
         desks: [
           {
-            country: 'BANGLADESH (DHAKA HUB)',
+            country: 'Bangladesh · Dhaka Hub',
             org: 'Silver Group — BMET Licensed Sending Hub',
             address: 'Gulshan–Banani / Uttara Recruitment Complex, Dhaka, Bangladesh',
             phone: '+880 1700-000000',
@@ -2002,15 +2384,15 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
             hours: 'Chủ nhật – Thứ năm · 09:00 – 21:00 BST',
           },
           {
-            country: 'VIETNAM (HUNG YEN & HANOI)',
-            org: 'Vietnam Textile Partners — Plant Coordination',
-            address: 'Khu công nghiệp Phố Nối, Tỉnh Hưng Yên, Việt Nam',
+            country: 'Việt Nam · Hưng Yên & Hà Nội',
+            org: 'Quynh An Yarn Co., Ltd — Plant Coordination',
+            address: 'Thôn A Mễ, Xã Quỳnh An, Tỉnh Hưng Yên, Việt Nam',
             phone: '+84 24-3900-0000',
             email: 'vn-desk@hr.handsandhead.com',
             hours: 'Thứ hai – Thứ bảy · 08:30 – 17:30 ICT',
           },
           {
-            country: 'JAPAN (TOKYO & OSAKA)',
+            country: 'Nhật Bản · Tokyo & Osaka',
             org: 'Hara International — Supervising & RSK Organization',
             address: 'Chiyoda-ku, Tokyo 101-0047, Nhật Bản',
             phone: '+81 3-5000-0000',
@@ -2022,15 +2404,27 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     },
     footer: {
       brandTitle: 'XUẤT KHẨU NHÂN LỰC QUỐC TẾ',
+      allianceHeading: 'LIÊN MINH CHIẾN LƯỢC 3 QUỐC GIA (ĐANG HOẠT ĐỘNG)',
       ethicalNotice:
         'Tuyển dụng đạo đức minh bạch, không gian lận và tuân thủ đầy đủ thẻ thông minh BMET. Tuyệt đối không giao dịch tài chính qua trung gian trái phép.',
       quickLinksHeading: 'Liên kết nhanh',
       privacyHeading: 'Bảo mật & An toàn dữ liệu',
       privacySummary:
         'Hộ chiếu, NID và hồ sơ y tế được mã hóa và chỉ dùng cho quy trình xin thị thực, chứng thực Đại sứ quán và xử lý BMET.',
-      copyright: '© 2026 HUMAN RESOURCE EXPORT · Silver Group × Hara International × Vietnam Textile Partners',
+      copyright: '© 2026 HUMAN RESOURCE EXPORT · Silver Group × Hara International × Quynh An Yarn Co., Ltd',
       techProviderLabel: 'Technology Provider:',
-      techProviderName: 'Hands & Head (handsandhead.com)',
+      techProviderName: 'HANDS & HEAD',
+      techProviderCard: {
+        badge: 'TECHNOLOGY PROVIDER · NỀN TẢNG CÔNG NGHỆ LÕI',
+        title: 'HANDS & HEAD',
+        subtitle: 'Đối tác hạ tầng tuyển dụng xuyên biên giới & đồng bộ dữ liệu thời gian thực',
+        websiteUrl: 'https://handsandhead.com',
+        features: [
+          'Kho lưu trữ IndexedDB an toàn kết hợp đồng bộ máy chủ thời gian thực',
+          'Quy trình nộp hồ sơ 4 bước tự động & tra cứu tiến độ 7 giai đoạn',
+          'Quản lý chứng thực Đại sứ quán, thẻ BMET và khóa chỉ tiêu tự động',
+        ],
+      },
     },
     matrix: {
       sectionLabel: 'ĐƠN TUYỂN NHÀ MÁY SỢI VIỆT NAM • HƯNG YÊN',
@@ -2143,6 +2537,16 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
         'Cấp thẻ thông minh BMET, lấy dấu vân tay & định hướng bay',
         'Giấy khám sức khỏe đạt chuẩn (không bệnh truyền nhiễm, tim mạch, thần kinh)',
       ],
+      liveSearchHeading: 'TRA CỨU PHÁP LÝ TRỰC TUYẾN (GOOGLE SEARCH)',
+      liveSearchSubheading: 'Truy vấn hướng dẫn BMET & Bộ luật Lao động Việt Nam từ nguồn web chính thức',
+      liveBtnBmet: 'Hướng dẫn chứng thực BMET',
+      liveBtnVietnam: 'Cập nhật Bộ luật Lao động VN',
+      liveSearchPlaceholder: 'Nhập câu hỏi về BMET, hợp đồng hoặc tăng ca Việt Nam...',
+      liveSearchBtn: 'TÌM NGUỒN WEB',
+      liveSearching: 'Đang truy vấn nguồn web chính thức...',
+      liveSourcesLabel: 'Nguồn web chính thức đã xác thực',
+      liveSearchedAtLabel: 'Cập nhật lúc',
+      liveDisclaimer: 'Tổng hợp trực tiếp từ Google Search trên các nguồn thông tin chính thống.',
       close: 'ĐÓNG',
     },
     wizard: {
@@ -2231,7 +2635,7 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
     corridors: {
       heading: 'TRUNG TÂM ĐIỀU HÀNH 3 QUỐC GIA',
       bangladeshSub: 'Silver Group — Trung tâm Dhaka & Chattogram',
-      vietnamSub: 'Đối tác Việt Nam — Hà Nội & Hưng Yên',
+      vietnamSub: 'Quynh An Yarn Co., Ltd — Hưng Yên & Hà Nội',
       japanSub: 'Hara International — Tokyo, Osaka & Nagoya',
     },
     stages: {
@@ -2242,6 +2646,27 @@ export const TRANSLATIONS: Record<Locale, Translations> = {
       'COE / Embassy Attestation': '5. Chứng thực COE / ĐSQ',
       'BMET Smart Card': '6. Thẻ BMET',
       Deployed: '7. Đã xuất cảnh',
+    },
+    trends: {
+      heading: 'XU HƯỚNG TUYỂN DỤNG',
+      subheading: 'Phân bổ ứng viên theo giai đoạn (Y tế, Chứng thực, Thẻ BMET) & khối lượng hồ sơ hàng tháng',
+      stageDistTitle: 'Phân bổ ứng viên theo giai đoạn',
+      stageDistSub: 'Trọng tâm Đạt sức khỏe, Chứng thực COE & Thẻ thông minh BMET',
+      monthlyVolTitle: 'Hồ sơ xử lý theo tháng',
+      monthlyVolSub: 'So sánh hồ sơ tiếp nhận và hồ sơ đã hoàn tất xử lý',
+      applicationsLabel: 'Hồ sơ tiếp nhận',
+      clearedLabel: 'Đã xử lý xong',
+      medicalLabel: 'Đạt sức khỏe',
+      attestationLabel: 'Chứng thực / COE',
+      smartCardLabel: 'Thẻ BMET',
+    },
+    partnerSettings: {
+      title: 'CÀI ĐẶT TÊN ĐỐI TÁC NHÀ MÁY VIỆT NAM',
+      subtitle: 'Chỉnh sửa tên công ty đối tác Việt Nam hiển thị trên Thanh Liên Minh và hồ sơ đơn tuyển',
+      fieldLabel: 'Tên công ty đối tác Việt Nam',
+      saveBtn: 'Lưu tên đối tác',
+      resetBtn: 'Khôi phục mặc định',
+      savedNotice: 'Đã cập nhật & đồng bộ tên đối tác',
     },
     labels: {
       searchCandidates: 'Tìm theo tên, mã hồ sơ, SĐT, ngành nghề...',

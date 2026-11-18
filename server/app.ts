@@ -12,6 +12,10 @@ import {
   trackCandidate,
   updateCandidateAtomic,
 } from './services/recruitmentService.ts';
+import {
+  GeminiUnavailableError,
+  runLegalSearchGrounding,
+} from './services/legalSearchService.ts';
 
 interface StoredUpload {
   id: string;
@@ -54,6 +58,15 @@ export function createApiApp() {
         return;
       }
       res.json({ candidate });
+    } catch (err) {
+      next(err);
+    }
+  });
+
+  app.post('/api/legal/search', async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const result = await runLegalSearchGrounding(req.body ?? {});
+      res.json(result);
     } catch (err) {
       next(err);
     }
@@ -161,7 +174,11 @@ export function createApiApp() {
 
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
     void _next;
-    if (err instanceof QuotaExhaustedError || err instanceof NotFoundError) {
+    if (
+      err instanceof QuotaExhaustedError ||
+      err instanceof NotFoundError ||
+      err instanceof GeminiUnavailableError
+    ) {
       res.status(err.statusCode).json({ error: err.message });
       return;
     }

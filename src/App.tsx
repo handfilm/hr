@@ -14,6 +14,7 @@ import { PARTNER_HUBS } from './data/initialData.ts';
 import { useRecruitmentSync } from './sync/engine.ts';
 import { CyberOverlay } from './components/CyberOverlay.tsx';
 import { TopAllianceHeader } from './components/TopAllianceHeader.tsx';
+import { MobileBottomNav } from './components/MobileBottomNav.tsx';
 import { PublicHomePage } from './components/PublicHomePage.tsx';
 import { LegalProtectionModal } from './components/LegalProtectionModal.tsx';
 import { InfoModal } from './components/InfoModal.tsx';
@@ -30,10 +31,13 @@ import { RegisterCandidateModal } from './components/RegisterCandidateModal.tsx'
 import { CreateRequisitionModal } from './components/CreateRequisitionModal.tsx';
 
 const STORAGE_LOCALE_KEY = 'hh_hr_locale_v2';
+const STORAGE_VN_PARTNER_KEY = 'hh_hr_vn_partner_v1';
+const DEFAULT_VN_PARTNER_NAME = 'QUYNH AN YARN CO., LTD';
 
 export function App() {
   const [mode, setMode] = useState<AppMode>('public');
   const [activeTab, setActiveTab] = useState<WorkspaceTab>('overview');
+  const [activeSection, setActiveSection] = useState<TopNavSection>('home');
   const [overlayEnabled, setOverlayEnabled] = useState(true);
 
   const [locale, setLocale] = useState<Locale>(() => {
@@ -46,6 +50,18 @@ export function App() {
       // ignore storage errors
     }
     return 'bn';
+  });
+
+  const [vietnamPartnerName, setVietnamPartnerName] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_VN_PARTNER_KEY);
+      if (saved && saved.trim()) {
+        return saved.trim();
+      }
+    } catch {
+      // ignore storage errors
+    }
+    return DEFAULT_VN_PARTNER_NAME;
   });
 
   const {
@@ -91,9 +107,18 @@ export function App() {
     }
   }, [locale]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_VN_PARTNER_KEY, vietnamPartnerName);
+    } catch {
+      // ignore storage errors
+    }
+  }, [vietnamPartnerName]);
+
   const t = TRANSLATIONS[locale];
 
   const handleNavigateSection = useCallback((section: TopNavSection) => {
+    setActiveSection(section);
     if (section === 'home') {
       setMode('public');
       setInfoModal(null);
@@ -119,6 +144,16 @@ export function App() {
     }
     setShowLegalModal(false);
     setInfoModal(section);
+  }, []);
+
+  const handleUpdateVietnamPartnerName = useCallback((nextName: string) => {
+    const cleaned = nextName.trim();
+    if (!cleaned) return;
+    setVietnamPartnerName(cleaned);
+  }, []);
+
+  const handleResetVietnamPartnerName = useCallback(() => {
+    setVietnamPartnerName(DEFAULT_VN_PARTNER_NAME);
   }, []);
 
   const handleWizardSubmit = async (newCandidate: Candidate, englishScore: number) => {
@@ -148,7 +183,7 @@ export function App() {
   ).length;
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col relative">
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex flex-col relative pb-20 md:pb-0">
       <CyberOverlay enabled={overlayEnabled} />
 
       <TopAllianceHeader
@@ -158,6 +193,7 @@ export function App() {
         onChangeLocale={setLocale}
         overlayEnabled={overlayEnabled}
         onToggleOverlay={() => setOverlayEnabled((v) => !v)}
+        activeSection={activeSection}
         onNavigateSection={handleNavigateSection}
         t={t}
       />
@@ -179,6 +215,7 @@ export function App() {
         <main className="flex-1 relative z-10">
           <PublicHomePage
             t={t}
+            vietnamPartnerName={vietnamPartnerName}
             candidates={candidates}
             requisitions={requisitions}
             trackerQuery={trackerQuery}
@@ -234,6 +271,7 @@ export function App() {
                 <OverviewView
                   candidates={candidates}
                   requisitions={requisitions}
+                  vietnamPartnerName={vietnamPartnerName}
                   t={t}
                   onNavigate={setActiveTab}
                   onSelectCandidate={setSelectedCandidateId}
@@ -244,6 +282,7 @@ export function App() {
                 <CandidatesView
                   candidates={candidates}
                   requisitions={requisitions}
+                  vietnamPartnerName={vietnamPartnerName}
                   t={t}
                   selectedCandidateId={selectedCandidateId}
                   onSelectCandidate={setSelectedCandidateId}
@@ -264,6 +303,8 @@ export function App() {
                 <JobOrdersView
                   requisitions={requisitions}
                   candidates={candidates}
+                  vietnamPartnerName={vietnamPartnerName}
+                  onUpdateVietnamPartnerName={handleUpdateVietnamPartnerName}
                   t={t}
                   onOpenCreateModal={() => setShowCreateReqModal(true)}
                   onSelectCandidate={(id) => {
@@ -288,14 +329,32 @@ export function App() {
               )}
 
               {activeTab === 'partners' && (
-                <PartnersView hubs={PARTNER_HUBS} t={t} />
+                <PartnersView
+                  hubs={PARTNER_HUBS}
+                  vietnamPartnerName={vietnamPartnerName}
+                  onUpdateVietnamPartnerName={handleUpdateVietnamPartnerName}
+                  onResetVietnamPartnerName={handleResetVietnamPartnerName}
+                  t={t}
+                />
               )}
             </main>
           </div>
         </div>
       )}
 
-      <Footer t={t} onNavigateSection={handleNavigateSection} />
+      <Footer
+        t={t}
+        vietnamPartnerName={vietnamPartnerName}
+        onNavigateSection={handleNavigateSection}
+      />
+
+      {/* Persistent Mobile Bottom Navigation Bar */}
+      <MobileBottomNav
+        activeSection={activeSection}
+        mode={mode}
+        onNavigateSection={handleNavigateSection}
+        t={t}
+      />
 
       {/* Public Modals */}
       {wizardStep !== null && (
@@ -318,6 +377,7 @@ export function App() {
       {showLegalModal && (
         <LegalProtectionModal
           t={t}
+          locale={locale}
           onClose={() => setShowLegalModal(false)}
         />
       )}
@@ -325,6 +385,7 @@ export function App() {
       {infoModal !== null && (
         <InfoModal
           type={infoModal}
+          vietnamPartnerName={vietnamPartnerName}
           t={t}
           onClose={() => setInfoModal(null)}
         />
@@ -350,6 +411,7 @@ export function App() {
         <RegisterCandidateModal
           t={t}
           requisitions={requisitions}
+          vietnamPartnerName={vietnamPartnerName}
           onClose={() => setShowRegisterModal(false)}
           onSubmit={(cand) => {
             void handleRegisterCandidate(cand);

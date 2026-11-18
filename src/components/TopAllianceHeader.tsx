@@ -1,19 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import {
   ArrowLeftRight,
-  Check,
   Briefcase,
+  Check,
   Globe,
   HelpCircle,
   Home,
   Layers,
-  ShieldCheck,
   Phone,
   Scale,
   ShieldAlert,
+  ShieldCheck,
 } from 'lucide-react';
 import type { AppMode, Locale, TopNavSection } from '../types.ts';
 import type { Translations } from '../i18n.ts';
+import { AllianceBar } from './AllianceBar.tsx';
 import { HoverDetailButton } from './HoverDetailButton.tsx';
 
 interface TopAllianceHeaderProps {
@@ -23,6 +24,7 @@ interface TopAllianceHeaderProps {
   onChangeLocale: (locale: Locale) => void;
   overlayEnabled: boolean;
   onToggleOverlay: () => void;
+  activeSection: TopNavSection;
   onNavigateSection: (section: TopNavSection) => void;
   t: Translations;
 }
@@ -41,11 +43,11 @@ export function TopAllianceHeader({
   onChangeLocale,
   overlayEnabled,
   onToggleOverlay,
+  activeSection,
   onNavigateSection,
   t,
 }: TopAllianceHeaderProps) {
   const [langMenuOpen, setLangMenuOpen] = useState(false);
-  const [activeNav, setActiveNav] = useState<TopNavSection>('home');
   const langDropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -83,20 +85,14 @@ export function TopAllianceHeader({
     { id: 'contact', label: t.topNav.contact, icon: Phone, hover: t.hoverCards.navContact },
   ];
 
-  const handleNavClick = (id: TopNavSection) => {
-    setActiveNav(id);
-    onNavigateSection(id);
-  };
-
   return (
     <header className="relative lg:sticky lg:top-0 z-40 bg-[#0a0a0a]/95 backdrop-blur-md border-b-2 border-[#27272a]">
       <div className="max-w-[1440px] mx-auto px-3 sm:px-6 py-2.5 sm:py-3 flex flex-col gap-2">
-        {/* TOP ROW: Brand Title (Left) + Language, Overlay & Admin Panel in Top-Right Corner */}
+        {/* TOP ROW: Brand Title (Left) + Top-Right Corner Controls */}
         <div className="flex items-center justify-between gap-2 sm:gap-4">
-          {/* Brand Title */}
           <button
             type="button"
-            onClick={() => handleNavClick('home')}
+            onClick={() => onNavigateSection('home')}
             className="flex items-center gap-2 sm:gap-3 text-left min-w-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5500] cursor-pointer"
           >
             <span className="w-2 sm:w-2.5 h-6 sm:h-7 bg-[#FF5500] shrink-0" aria-hidden="true" />
@@ -112,7 +108,6 @@ export function TopAllianceHeader({
 
           {/* Top-Right Corner Controls: Language + Overlay + Admin Panel */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
-            {/* Language Icon-Only Dropdown */}
             <div ref={langDropdownRef} className="relative">
               <HoverDetailButton
                 badge={t.hoverCards.languageSwitcher.badge}
@@ -177,7 +172,6 @@ export function TopAllianceHeader({
               )}
             </div>
 
-            {/* Overlay Icon-Only Toggle */}
             <HoverDetailButton
               badge={t.hoverCards.overlayToggle.badge}
               title={t.hoverCards.overlayToggle.title}
@@ -203,7 +197,6 @@ export function TopAllianceHeader({
               </button>
             </HoverDetailButton>
 
-            {/* Admin Panel / Command Center Trigger (Icon in top corner on mobile, Icon + Text on desktop) */}
             <HoverDetailButton
               badge={t.hoverCards.commandCenter.badge}
               title={t.hoverCards.commandCenter.title}
@@ -223,9 +216,9 @@ export function TopAllianceHeader({
                 }`}
               >
                 {mode === 'public' ? (
-                  <ShieldAlert className="w-4 h-4 sm:w-4 sm:h-4 shrink-0" aria-hidden="true" />
+                  <ShieldAlert className="w-4 h-4 shrink-0" aria-hidden="true" />
                 ) : (
-                  <ArrowLeftRight className="w-4 h-4 sm:w-4 sm:h-4 shrink-0" aria-hidden="true" />
+                  <ArrowLeftRight className="w-4 h-4 shrink-0" aria-hidden="true" />
                 )}
                 <span className="hidden sm:inline">
                   {mode === 'public' ? t.modeSwitch.toAdmin : t.modeSwitch.toPublic}
@@ -235,44 +228,18 @@ export function TopAllianceHeader({
           </div>
         </div>
 
-        {/* SECOND ROW: Highlighted Collaboration Banner (Left) + Pro Responsive Nav Links (Right) */}
+        {/* SECOND ROW: Balanced 2-Node Partnership Bar (Silver Group × Hara International) + Desktop Navigation */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-2">
-          {/* Highlighted Collaboration Strip Directly Under Title */}
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 px-2.5 py-1 bg-[#121212] border border-[#FF5500]/65 shadow-[0_0_14px_rgba(255,85,0,0.16)] text-[10px] sm:text-[11px] font-brutal-mono self-start lg:self-auto">
-            <span className="inline-flex items-center gap-1 font-bold text-white whitespace-nowrap">
-              <span className="px-1 py-0.5 bg-[#FF5500] text-black text-[9px] font-bold leading-none">
-                BD
-              </span>
-              <span>{t.collaborationPartners.bd}</span>
-            </span>
-            <span className="text-[#FF5500] font-bold" aria-hidden="true">
-              ×
-            </span>
-            <span className="inline-flex items-center gap-1 font-bold text-white whitespace-nowrap">
-              <span className="px-1 py-0.5 bg-[#f59e0b] text-black text-[9px] font-bold leading-none">
-                JP
-              </span>
-              <span>{t.collaborationPartners.jp}</span>
-            </span>
-            <span className="text-[#FF5500] font-bold" aria-hidden="true">
-              ×
-            </span>
-            <span className="inline-flex items-center gap-1 font-bold text-white whitespace-nowrap">
-              <span className="px-1 py-0.5 bg-[#10b981] text-black text-[9px] font-bold leading-none">
-                VN
-              </span>
-              <span>{t.collaborationPartners.vn}</span>
-            </span>
-          </div>
+          <AllianceBar t={t} />
 
-          {/* Pro Navigation Bar: Big Icons ONLY on Mobile (<md), Full Text + Icons on Desktop (md+) */}
+          {/* Desktop Navigation Bar (Full Text + Icons on md+; Mobile uses persistent bottom nav bar) */}
           <nav
             aria-label="Primary portal navigation"
-            className="grid grid-cols-6 md:flex md:flex-wrap items-center gap-1.5 md:gap-1 bg-[#121212] border border-[#27272a] p-1"
+            className="hidden md:flex md:flex-wrap items-center gap-1 bg-[#121212] border border-[#27272a] p-1 self-start lg:self-auto"
           >
             {topNavItems.map((item) => {
               const NavIcon = item.icon;
-              const isSelected = activeNav === item.id && mode === 'public';
+              const isSelected = activeSection === item.id && mode === 'public';
               return (
                 <HoverDetailButton
                   key={item.id}
@@ -285,22 +252,21 @@ export function TopAllianceHeader({
                 >
                   <button
                     type="button"
-                    onClick={() => handleNavClick(item.id)}
+                    onClick={() => onNavigateSection(item.id)}
                     aria-label={item.label}
-                    title={item.label}
-                    className={`w-full md:w-auto min-h-[44px] md:min-h-[38px] md:px-3 flex items-center justify-center gap-2 text-xs font-bold transition-all whitespace-nowrap shrink-0 cursor-pointer border ${
+                    className={`min-h-[38px] px-3 flex items-center justify-center gap-2 text-xs font-bold transition-all whitespace-nowrap shrink-0 cursor-pointer border ${
                       isSelected
                         ? 'bg-[#18181b] border-[#FF5500] text-white shadow-[0_0_12px_rgba(255,85,0,0.2)]'
                         : 'bg-transparent border-transparent text-[#d4d4d8] hover:text-white hover:bg-[#18181b] hover:border-[#27272a]'
                     }`}
                   >
                     <NavIcon
-                      className={`w-5 h-5 md:w-4 md:h-4 shrink-0 ${
+                      className={`w-4 h-4 shrink-0 ${
                         isSelected ? 'text-[#FF5500]' : 'text-[#FF5500]/85'
                       }`}
                       aria-hidden="true"
                     />
-                    <span className="hidden md:inline">{item.label}</span>
+                    <span>{item.label}</span>
                   </button>
                 </HoverDetailButton>
               );

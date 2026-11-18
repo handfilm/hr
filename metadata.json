@@ -1,5 +1,8 @@
 {
   "name": "Hands & Head HR",
-  "description": "Silver Group (Bangladesh) × Hara International (Japan) × Vietnam Partner tri-national recruitment and deployment portal.",
-  "requestFramePermissions": []
+  "description": "Silver Group × Hara International × Quynh An Yarn Co., Ltd tri-national recruitment and deployment portal.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

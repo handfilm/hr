@@ -1,4 +1,17 @@
-import { ArrowRight } from 'lucide-react';
+import { useMemo } from 'react';
+import { ArrowRight, BarChart3, TrendingUp } from 'lucide-react';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ComposedChart,
+  Line,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import { Candidate, JobRequisition, WorkspaceTab } from '../types';
 import { PIPELINE_STAGES } from '../data/initialData';
 import { Translations } from '../i18n';
@@ -6,14 +19,45 @@ import { Translations } from '../i18n';
 interface OverviewViewProps {
   candidates: Candidate[];
   requisitions: JobRequisition[];
+  vietnamPartnerName: string;
   t: Translations;
   onNavigate: (tab: WorkspaceTab) => void;
   onSelectCandidate: (candidateId: string) => void;
 }
 
+const STAGE_CHART_COLORS: Record<string, string> = {
+  'Application Submitted': '#71717a',
+  Screening: '#a1a1aa',
+  'Online Interview': '#38bdf8',
+  'Medical Fit': '#10b981',
+  'COE / Embassy Attestation': '#f59e0b',
+  'BMET Smart Card': '#FF5500',
+  Deployed: '#22c55e',
+};
+
+const STAGE_SHORT_LABELS: Record<string, string> = {
+  'Application Submitted': 'Submitted',
+  Screening: 'Screening',
+  'Online Interview': 'Interview',
+  'Medical Fit': 'Medical',
+  'COE / Embassy Attestation': 'Attestation',
+  'BMET Smart Card': 'Smart Card',
+  Deployed: 'Deployed',
+};
+
+const BASELINE_MONTHLY_VOLUME: { monthKey: string; label: string; baseApps: number; baseCleared: number }[] = [
+  { monthKey: '2026-07', label: 'JUL 26', baseApps: 12, baseCleared: 9 },
+  { monthKey: '2026-08', label: 'AUG 26', baseApps: 18, baseCleared: 14 },
+  { monthKey: '2026-09', label: 'SEP 26', baseApps: 24, baseCleared: 19 },
+  { monthKey: '2026-10', label: 'OCT 26', baseApps: 31, baseCleared: 25 },
+  { monthKey: '2026-11', label: 'NOV 26', baseApps: 38, baseCleared: 29 },
+  { monthKey: '2026-12', label: 'DEC 26', baseApps: 44, baseCleared: 36 },
+];
+
 export function OverviewView({
   candidates,
   requisitions,
+  vietnamPartnerName,
   t,
   onNavigate,
   onSelectCandidate,
@@ -22,24 +66,54 @@ export function OverviewView({
     (sum, req) => sum + Math.max(0, req.openQuota - req.filledCount),
     0,
   );
-  const coeInProgress = candidates.filter(
-    (c) =>
-      c.stage === 'COE / Embassy Attestation' ||
-      c.stage === 'BMET Smart Card' ||
-      c.stage === 'Medical Fit',
+  const medicalCount = candidates.filter((c) => c.stage === 'Medical Fit').length;
+  const attestationCount = candidates.filter(
+    (c) => c.stage === 'COE / Embassy Attestation',
   ).length;
+  const smartCardCount = candidates.filter((c) => c.stage === 'BMET Smart Card').length;
+  const coeInProgress = medicalCount + attestationCount + smartCardCount;
   const deployedCount = candidates.filter((c) => c.stage === 'Deployed').length;
 
   const bdCandidates = candidates.filter((c) => c.originCountry === 'Bangladesh');
   const vnCandidates = candidates.filter((c) => c.originCountry === 'Vietnam');
 
-  const stageCounts = PIPELINE_STAGES.map((stage) => ({
-    stage,
-    label: t.stages[stage],
-    count: candidates.filter((c) => c.stage === stage).length,
-  }));
+  const stageCounts = useMemo(
+    () =>
+      PIPELINE_STAGES.map((stage) => ({
+        stage,
+        shortLabel: STAGE_SHORT_LABELS[stage] ?? stage,
+        label: t.stages[stage],
+        count: candidates.filter((c) => c.stage === stage).length,
+        fill: STAGE_CHART_COLORS[stage] ?? '#FF5500',
+      })),
+    [candidates, t.stages],
+  );
 
   const maxStageCount = Math.max(1, ...stageCounts.map((s) => s.count));
+
+  const monthlyTrendData = useMemo(() => {
+    const liveMonthApps = new Map<string, number>();
+    const liveMonthCleared = new Map<string, number>();
+
+    for (const c of candidates) {
+      const monthKey = (c.updatedAt || c.interviewDate || '2026-11').slice(0, 7);
+      liveMonthApps.set(monthKey, (liveMonthApps.get(monthKey) ?? 0) + 1);
+      if (
+        c.stage === 'Medical Fit' ||
+        c.stage === 'COE / Embassy Attestation' ||
+        c.stage === 'BMET Smart Card' ||
+        c.stage === 'Deployed'
+      ) {
+        liveMonthCleared.set(monthKey, (liveMonthCleared.get(monthKey) ?? 0) + 1);
+      }
+    }
+
+    return BASELINE_MONTHLY_VOLUME.map((m) => ({
+      month: m.label,
+      applications: m.baseApps + (liveMonthApps.get(m.monthKey) ?? 0),
+      cleared: m.baseCleared + (liveMonthCleared.get(m.monthKey) ?? 0),
+    }));
+  }, [candidates]);
 
   const upcomingActions = candidates
     .filter((c) => c.stage !== 'Deployed')
@@ -52,7 +126,7 @@ export function OverviewView({
           {t.corridors.heading}
         </h1>
         <p className="mt-1 font-brutal-mono text-xs text-[#A1A1AA]">
-          {t.portalSubtitle}
+          Silver Group × Hara International × {vietnamPartnerName}
         </p>
       </div>
 
@@ -66,7 +140,7 @@ export function OverviewView({
             {candidates.length}
           </p>
           <p className="mt-2 font-brutal-mono text-xs text-[#FF5500] tabular-nums">
-            BD {bdCandidates.length} · VN {vnCandidates.length}
+            {bdCandidates.length} DHAKA · {vnCandidates.length} HUNG YEN
           </p>
         </div>
 
@@ -106,6 +180,174 @@ export function OverviewView({
           </p>
         </div>
       </div>
+
+      {/* RECRUITMENT TRENDS DASHBOARD (RECHARTS) */}
+      <section className="space-y-4" aria-labelledby="recruitment-trends-heading">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 border-b-2 border-[#27272a] pb-4">
+          <div>
+            <div className="flex items-center gap-2 text-[#FF5500]">
+              <TrendingUp className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span className="font-brutal-mono text-xs font-bold uppercase tracking-wider">
+                ANALYTICS &amp; THROUGHPUT
+              </span>
+            </div>
+            <h2
+              id="recruitment-trends-heading"
+              className="mt-1 text-2xl font-bold text-white uppercase"
+            >
+              {t.trends.heading}
+            </h2>
+            <p className="text-xs text-[#A1A1AA] mt-0.5">{t.trends.subheading}</p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2 font-brutal-mono text-xs">
+            <span className="px-3 py-1.5 bg-[#121212] border border-[#10b981] text-[#10b981] tabular-nums">
+              {t.trends.medicalLabel}: {medicalCount}
+            </span>
+            <span className="px-3 py-1.5 bg-[#121212] border border-[#f59e0b] text-[#f59e0b] tabular-nums">
+              {t.trends.attestationLabel}: {attestationCount}
+            </span>
+            <span className="px-3 py-1.5 bg-[#121212] border border-[#FF5500] text-[#FF5500] tabular-nums">
+              {t.trends.smartCardLabel}: {smartCardCount}
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Chart 1: Candidate Distribution by Stage */}
+          <div className="lg:col-span-6 bg-[#121212] border-2 border-[#27272a] p-5 min-w-0">
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-white uppercase">
+                  {t.trends.stageDistTitle}
+                </h3>
+                <p className="font-brutal-mono text-[11px] text-[#A1A1AA] mt-0.5">
+                  {t.trends.stageDistSub}
+                </p>
+              </div>
+              <BarChart3 className="w-5 h-5 text-[#FF5500] shrink-0" aria-hidden="true" />
+            </div>
+
+            <div className="h-[270px] w-full min-w-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart
+                  data={stageCounts}
+                  margin={{ top: 10, right: 12, left: -18, bottom: 16 }}
+                >
+                  <CartesianGrid stroke="#27272a" strokeDasharray="3 3" vertical={false} />
+                  <XAxis
+                    dataKey="shortLabel"
+                    tick={{ fill: '#A1A1AA', fontSize: 10, fontFamily: 'Space Mono, monospace' }}
+                    axisLine={{ stroke: '#27272a' }}
+                    tickLine={false}
+                    interval={0}
+                    angle={-18}
+                    textAnchor="end"
+                  />
+                  <YAxis
+                    allowDecimals={false}
+                    tick={{ fill: '#A1A1AA', fontSize: 11, fontFamily: 'Space Mono, monospace' }}
+                    axisLine={{ stroke: '#27272a' }}
+                    tickLine={false}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(255, 85, 0, 0.08)' }}
+                    contentStyle={{
+                      backgroundColor: '#0a0a0a',
+                      border: '2px solid #FF5500',
+                      borderRadius: '0px',
+                      color: '#ffffff',
+                      fontSize: '12px',
+                      fontFamily: 'Space Mono, monospace',
+                    }}
+                    labelStyle={{ color: '#FF5500', fontWeight: 700 }}
+                    formatter={(value: unknown) => [String(value ?? 0), t.labels.stage]}
+                  />
+                  <Bar dataKey="count" radius={[0, 0, 0, 0]} maxBarSize={38}>
+                    {stageCounts.map((entry) => (
+                      <Cell key={entry.stage} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+
+          {/* Chart 2: Monthly Volume of Processed Applications */}
+          <div className="lg:col-span-6 bg-[#121212] border-2 border-[#27272a] p-5 min-w-0">
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <div>
+                <h3 className="text-sm sm:text-base font-bold text-white uppercase">
+                  {t.trends.monthlyVolTitle}
+                </h3>
+                <p className="font-brutal-mono text-[11px] text-[#A1A1AA] mt-0.5">
+                  {t.trends.monthlyVolSub}
+                </p>
+              </div>
+              <div className="flex items-center gap-3 font-brutal-mono text-[10px] shrink-0">
+                <span className="flex items-center gap-1 text-[#FF5500]">
+                  <span className="w-2.5 h-2.5 bg-[#FF5500] inline-block" />
+                  {t.trends.applicationsLabel}
+                </span>
+                <span className="flex items-center gap-1 text-[#10b981]">
+                  <span className="w-2.5 h-2.5 bg-[#10b981] inline-block" />
+                  {t.trends.clearedLabel}
+                </span>
+              </div>
+            </div>
+
+            <div className="h-[270px] w-full min-w-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <ComposedChart
+                  data={monthlyTrendData}
+                  margin={{ top: 10, right: 12, left: -18, bottom: 4 }}
+                >
+                  <CartesianGrid stroke="#27272a" strokeDasharray="3 3" vertical={false} />
+                  <XAxis
+                    dataKey="month"
+                    tick={{ fill: '#A1A1AA', fontSize: 11, fontFamily: 'Space Mono, monospace' }}
+                    axisLine={{ stroke: '#27272a' }}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    allowDecimals={false}
+                    tick={{ fill: '#A1A1AA', fontSize: 11, fontFamily: 'Space Mono, monospace' }}
+                    axisLine={{ stroke: '#27272a' }}
+                    tickLine={false}
+                  />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(255, 85, 0, 0.08)' }}
+                    contentStyle={{
+                      backgroundColor: '#0a0a0a',
+                      border: '2px solid #FF5500',
+                      borderRadius: '0px',
+                      color: '#ffffff',
+                      fontSize: '12px',
+                      fontFamily: 'Space Mono, monospace',
+                    }}
+                    labelStyle={{ color: '#FF5500', fontWeight: 700 }}
+                  />
+                  <Bar
+                    dataKey="applications"
+                    name={t.trends.applicationsLabel}
+                    fill="#FF5500"
+                    maxBarSize={36}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="cleared"
+                    name={t.trends.clearedLabel}
+                    stroke="#10b981"
+                    strokeWidth={3}
+                    dot={{ r: 4, fill: '#10b981', strokeWidth: 0 }}
+                    activeDot={{ r: 6, fill: '#34d399' }}
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* Corridor Summary & 7-Stage Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
@@ -154,9 +396,9 @@ export function OverviewView({
             </h2>
             <div className="space-y-3">
               <div className="bg-[#18181b] border-2 border-[#27272a] p-4">
-                <div className="flex items-baseline justify-between">
+                <div className="flex items-baseline justify-between gap-2">
                   <h3 className="text-base font-bold text-white">SILVER GROUP</h3>
-                  <span className="font-brutal-mono text-xs text-[#FF5500] tabular-nums">
+                  <span className="font-brutal-mono text-xs text-[#FF5500] tabular-nums shrink-0">
                     {bdCandidates.length} CANDIDATES
                   </span>
                 </div>
@@ -164,9 +406,11 @@ export function OverviewView({
               </div>
 
               <div className="bg-[#18181b] border-2 border-[#27272a] p-4">
-                <div className="flex items-baseline justify-between">
-                  <h3 className="text-base font-bold text-white">VIETNAM PARTNER</h3>
-                  <span className="font-brutal-mono text-xs text-[#10b981] tabular-nums">
+                <div className="flex items-baseline justify-between gap-2">
+                  <h3 className="text-base font-bold text-white truncate">
+                    {vietnamPartnerName}
+                  </h3>
+                  <span className="font-brutal-mono text-xs text-[#10b981] tabular-nums shrink-0">
                     {vnCandidates.length} CANDIDATES
                   </span>
                 </div>
@@ -174,9 +418,9 @@ export function OverviewView({
               </div>
 
               <div className="bg-[#18181b] border-2 border-[#27272a] p-4">
-                <div className="flex items-baseline justify-between">
+                <div className="flex items-baseline justify-between gap-2">
                   <h3 className="text-base font-bold text-white">HARA INTERNATIONAL</h3>
-                  <span className="font-brutal-mono text-xs text-[#f59e0b] tabular-nums">
+                  <span className="font-brutal-mono text-xs text-[#f59e0b] tabular-nums shrink-0">
                     {requisitions.length} ORDERS
                   </span>
                 </div>
@@ -238,7 +482,10 @@ export function OverviewView({
                     {candidate.fullName}
                   </td>
                   <td className="py-3.5 px-4 text-[#A1A1AA] whitespace-nowrap">
-                    {candidate.partnerAgency} · {candidate.originCountry}
+                    {candidate.partnerAgency === 'Vietnam Partner'
+                      ? vietnamPartnerName
+                      : candidate.partnerAgency}{' '}
+                    · {candidate.originCountry}
                   </td>
                   <td className="py-3.5 px-4 text-[#A1A1AA] whitespace-nowrap">
                     {candidate.tradeSector}

@@ -1,11 +1,14 @@
-import { useMemo, useState } from 'react';
-import { Plus } from 'lucide-react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { Check, Plus, Settings2 } from 'lucide-react';
 import type { Candidate, JobRequisition } from '../types.ts';
 import type { Translations } from '../i18n.ts';
+import { JapanFlag, VietnamFlag } from './CountryFlags.tsx';
 
 interface JobOrdersViewProps {
   requisitions: JobRequisition[];
   candidates: Candidate[];
+  vietnamPartnerName: string;
+  onUpdateVietnamPartnerName: (nextName: string) => void;
   t: Translations;
   onOpenCreateModal: () => void;
   onSelectCandidate: (candidateId: string) => void;
@@ -14,11 +17,19 @@ interface JobOrdersViewProps {
 export function JobOrdersView({
   requisitions,
   candidates,
+  vietnamPartnerName,
+  onUpdateVietnamPartnerName,
   t,
   onOpenCreateModal,
   onSelectCandidate,
 }: JobOrdersViewProps) {
   const [corridorFilter, setCorridorFilter] = useState<'ALL' | 'Bangladesh' | 'Vietnam'>('ALL');
+  const [draftVnName, setDraftVnName] = useState(vietnamPartnerName);
+  const [savedNotice, setSavedNotice] = useState(false);
+
+  useEffect(() => {
+    setDraftVnName(vietnamPartnerName);
+  }, [vietnamPartnerName]);
 
   const filteredReqs = useMemo(() => {
     if (corridorFilter === 'ALL') return requisitions;
@@ -28,6 +39,15 @@ export function JobOrdersView({
         r.preferredCorridor === 'Bangladesh & Vietnam',
     );
   }, [requisitions, corridorFilter]);
+
+  const handleSavePartner = (e: FormEvent) => {
+    e.preventDefault();
+    const trimmed = draftVnName.trim();
+    if (!trimmed) return;
+    onUpdateVietnamPartnerName(trimmed);
+    setSavedNotice(true);
+    window.setTimeout(() => setSavedNotice(false), 2200);
+  };
 
   return (
     <div className="space-y-6">
@@ -59,6 +79,38 @@ export function JobOrdersView({
         </button>
       </div>
 
+      {/* Inline Vietnam Factory Partner Setting Bar */}
+      <form
+        onSubmit={handleSavePartner}
+        className="bg-[#121212] border-2 border-[#27272a] p-4 flex flex-col md:flex-row md:items-center justify-between gap-3"
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
+          <Settings2 className="w-4 h-4 text-[#FF5500] shrink-0" aria-hidden="true" />
+          <VietnamFlag label="Vietnam" />
+          <span className="font-brutal-mono text-xs font-bold text-white uppercase truncate">
+            {t.partnerSettings.fieldLabel}:
+          </span>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 flex-1 max-w-xl">
+          <input
+            type="text"
+            required
+            value={draftVnName}
+            onChange={(e) => setDraftVnName(e.target.value)}
+            aria-label={t.partnerSettings.fieldLabel}
+            className="flex-1 min-h-[42px] px-3 bg-[#0a0a0a] border-2 border-[#27272a] focus:border-[#FF5500] text-white font-brutal-mono text-xs font-bold focus:outline-none"
+          />
+          <button
+            type="submit"
+            className="min-h-[42px] px-4 bg-[#18181b] border-2 border-[#FF5500] text-[#FF5500] hover:bg-[#FF5500] hover:text-black font-brutal-mono text-xs font-bold uppercase flex items-center justify-center gap-1.5 cursor-pointer transition-colors shrink-0"
+          >
+            {savedNotice && <Check className="w-3.5 h-3.5" aria-hidden="true" />}
+            <span>{savedNotice ? t.partnerSettings.savedNotice : t.partnerSettings.saveBtn}</span>
+          </button>
+        </div>
+      </form>
+
       <div className="bg-[#121212] border-2 border-[#27272a] overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
@@ -78,15 +130,31 @@ export function JobOrdersView({
               {filteredReqs.map((req) => {
                 const matched = candidates.filter((c) => c.assignedRequisitionId === req.id);
                 const used = req.lockedSlots + req.confirmedSlots;
+                const displayEmployer =
+                  req.country === 'VN' && req.id === 'REQ-VN-2027'
+                    ? vietnamPartnerName
+                    : req.employerName;
+                const displayCoordinator =
+                  req.country === 'VN'
+                    ? `Silver Group × ${vietnamPartnerName}`
+                    : req.coordinator;
+
                 return (
                   <tr key={req.id} className="hover:bg-[#18181b] transition-colors">
                     <td className="py-4 px-5 font-brutal-mono text-xs font-bold text-[#FF5500] tabular-nums whitespace-nowrap">
-                      {req.id}
+                      <span className="inline-flex items-center gap-2">
+                        {req.country === 'VN' ? (
+                          <VietnamFlag label="Vietnam" />
+                        ) : (
+                          <JapanFlag label="Japan" />
+                        )}
+                        <span>{req.id}</span>
+                      </span>
                     </td>
                     <td className="py-4 px-4">
-                      <p className="font-bold text-white">{req.employerName}</p>
+                      <p className="font-bold text-white">{displayEmployer}</p>
                       <p className="font-brutal-mono text-xs text-[#A1A1AA] mt-0.5">
-                        {req.title} · {req.coordinator}
+                        {req.title} · {displayCoordinator}
                       </p>
                       {matched.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-2 text-xs">

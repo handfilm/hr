@@ -6,6 +6,7 @@ import { Translations } from '../i18n';
 interface RegisterCandidateModalProps {
   t: Translations;
   requisitions: JobRequisition[];
+  vietnamPartnerName: string;
   onClose: () => void;
   onSubmit: (candidate: Candidate) => void;
 }
@@ -13,6 +14,7 @@ interface RegisterCandidateModalProps {
 export function RegisterCandidateModal({
   t,
   requisitions,
+  vietnamPartnerName,
   onClose,
   onSubmit,
 }: RegisterCandidateModalProps) {
@@ -149,7 +151,7 @@ export function RegisterCandidateModal({
                 className="w-full px-3 py-2.5 bg-[#18181b] border-2 border-[#27272a] text-white text-sm focus:border-[#FF5500] focus:outline-none"
               >
                 <option value="Bangladesh">Bangladesh (Silver Group)</option>
-                <option value="Vietnam">Vietnam (Vietnam Partner)</option>
+                <option value="Vietnam">Vietnam ({vietnamPartnerName})</option>
               </select>
             </div>
 

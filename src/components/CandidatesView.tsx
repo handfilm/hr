@@ -13,6 +13,7 @@ import { Translations } from '../i18n';
 interface CandidatesViewProps {
   candidates: Candidate[];
   requisitions: JobRequisition[];
+  vietnamPartnerName: string;
   t: Translations;
   selectedCandidateId: string | null;
   onSelectCandidate: (id: string | null) => void;
@@ -34,6 +35,7 @@ const CHECKLIST_LABELS: { key: keyof ComplianceChecklist; label: string }[] = [
 export function CandidatesView({
   candidates,
   requisitions,
+  vietnamPartnerName,
   t,
   selectedCandidateId,
   onSelectCandidate,
@@ -86,7 +88,7 @@ export function CandidatesView({
       c.fullName,
       c.phone,
       c.originCountry,
-      c.partnerAgency,
+      c.partnerAgency === 'Vietnam Partner' ? vietnamPartnerName : c.partnerAgency,
       c.tradeSector,
       c.jlptLevel,
       c.visaProgram,
@@ -231,7 +233,10 @@ export function CandidatesView({
                           <p className="font-brutal-mono text-[11px] text-[#A1A1AA]">{c.phone}</p>
                         </td>
                         <td className="py-3.5 px-4 text-[#A1A1AA] whitespace-nowrap">
-                          {c.originCountry} · {c.partnerAgency}
+                          {c.originCountry} ·{' '}
+                          {c.partnerAgency === 'Vietnam Partner'
+                            ? vietnamPartnerName
+                            : c.partnerAgency}
                         </td>
                         <td className="py-3.5 px-4 text-white whitespace-nowrap">
                           {c.tradeSector}

@@ -1,24 +1,26 @@
 import { useEffect, useState } from 'react';
 import {
   ChevronDown,
+  Clock,
   HelpCircle,
   Lock,
   Mail,
   MapPin,
   Phone,
-  Clock,
   X,
 } from 'lucide-react';
 import type { InfoModalType } from '../types.ts';
 import type { Translations } from '../i18n.ts';
+import { BangladeshFlag, JapanFlag, VietnamFlag } from './CountryFlags.tsx';
 
 interface InfoModalProps {
   type: Exclude<InfoModalType, null>;
+  vietnamPartnerName: string;
   t: Translations;
   onClose: () => void;
 }
 
-export function InfoModal({ type, t, onClose }: InfoModalProps) {
+export function InfoModal({ type, vietnamPartnerName, t, onClose }: InfoModalProps) {
   const [openFaqIdx, setOpenFaqIdx] = useState<number | null>(0);
 
   useEffect(() => {
@@ -149,40 +151,53 @@ export function InfoModal({ type, t, onClose }: InfoModalProps) {
 
           {type === 'contact' && (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {t.infoModals.contact.desks.map((desk, idx) => (
-                <article
-                  key={idx}
-                  className="bg-[#18181b] border-2 border-[#27272a] hover:border-[#FF5500] p-5 flex flex-col justify-between space-y-4 transition-colors"
-                >
-                  <div className="space-y-2">
-                    <p className="font-brutal-mono text-[11px] font-bold text-[#FF5500]">
-                      {desk.country}
-                    </p>
-                    <h3 className="text-base font-bold text-white leading-snug">
-                      {desk.org}
-                    </h3>
-                  </div>
+              {t.infoModals.contact.desks.map((desk, idx) => {
+                const Flag =
+                  idx === 0
+                    ? BangladeshFlag
+                    : idx === 1
+                      ? VietnamFlag
+                      : JapanFlag;
+                const displayOrg =
+                  idx === 1 ? `${vietnamPartnerName} — Plant Coordination` : desk.org;
+                return (
+                  <article
+                    key={idx}
+                    className="bg-[#18181b] border-2 border-[#27272a] hover:border-[#FF5500] p-5 flex flex-col justify-between space-y-4 transition-colors"
+                  >
+                    <div className="space-y-2">
+                      <div className="flex items-center gap-2">
+                        <Flag label={desk.country} />
+                        <p className="font-brutal-mono text-[11px] font-bold text-[#FF5500]">
+                          {desk.country}
+                        </p>
+                      </div>
+                      <h3 className="text-base font-bold text-white leading-snug">
+                        {displayOrg}
+                      </h3>
+                    </div>
 
-                  <div className="space-y-2.5 text-xs text-[#d4d4d8] border-t border-[#27272a] pt-3">
-                    <p className="flex items-start gap-2">
-                      <MapPin className="w-4 h-4 text-[#FF5500] shrink-0 mt-0.5" aria-hidden="true" />
-                      <span>{desk.address}</span>
-                    </p>
-                    <p className="flex items-center gap-2 font-brutal-mono">
-                      <Phone className="w-4 h-4 text-[#10b981] shrink-0" aria-hidden="true" />
-                      <span>{desk.phone}</span>
-                    </p>
-                    <p className="flex items-center gap-2 font-brutal-mono break-all">
-                      <Mail className="w-4 h-4 text-[#f59e0b] shrink-0" aria-hidden="true" />
-                      <span>{desk.email}</span>
-                    </p>
-                    <p className="flex items-center gap-2 font-brutal-mono text-[#A1A1AA]">
-                      <Clock className="w-4 h-4 shrink-0" aria-hidden="true" />
-                      <span>{desk.hours}</span>
-                    </p>
-                  </div>
-                </article>
-              ))}
+                    <div className="space-y-2.5 text-xs text-[#d4d4d8] border-t border-[#27272a] pt-3">
+                      <p className="flex items-start gap-2">
+                        <MapPin className="w-4 h-4 text-[#FF5500] shrink-0 mt-0.5" aria-hidden="true" />
+                        <span>{desk.address}</span>
+                      </p>
+                      <p className="flex items-center gap-2 font-brutal-mono">
+                        <Phone className="w-4 h-4 text-[#10b981] shrink-0" aria-hidden="true" />
+                        <span>{desk.phone}</span>
+                      </p>
+                      <p className="flex items-center gap-2 font-brutal-mono break-all">
+                        <Mail className="w-4 h-4 text-[#f59e0b] shrink-0" aria-hidden="true" />
+                        <span>{desk.email}</span>
+                      </p>
+                      <p className="flex items-center gap-2 font-brutal-mono text-[#A1A1AA]">
+                        <Clock className="w-4 h-4 shrink-0" aria-hidden="true" />
+                        <span>{desk.hours}</span>
+                      </p>
+                    </div>
+                  </article>
+                );
+              })}
             </div>
           )}
 

@@ -15,12 +15,14 @@ import type { Candidate, JobRequisition } from '../types.ts';
 import { PIPELINE_STAGES } from '../data/initialData.ts';
 import type { Translations } from '../i18n.ts';
 import { HoverDetailButton } from './HoverDetailButton.tsx';
+import { VietnamFlag } from './CountryFlags.tsx';
 import slideYarnImg from '../assets/images/hero_yarn_operators_1795037405504.jpg';
 import slideKnitImg from '../assets/images/hero_knit_inspection_1795037404989.jpg';
 import slideCorridorImg from '../assets/images/hero_corridor_training_1795037406445.jpg';
 
 interface PublicHomePageProps {
   t: Translations;
+  vietnamPartnerName: string;
   candidates: Candidate[];
   requisitions: JobRequisition[];
   trackerQuery: string;
@@ -46,6 +48,7 @@ const SLIDE_IMAGES = [
 
 export function PublicHomePage({
   t,
+  vietnamPartnerName,
   candidates,
   requisitions,
   trackerQuery,
@@ -249,9 +252,34 @@ export function PublicHomePage({
           </div>
         </div>
 
-        {/* Hero Bottom Stage: Localized Slide Headline + Overlaid Primary & Secondary CTAs */}
+        {/* Hero Bottom Stage: Main Recruiter Banner + Localized Slide Headline + Overlaid CTAs */}
         <div className="relative z-10 p-4 sm:p-7 lg:p-10 space-y-4 sm:space-y-6">
-          <div className="space-y-2 sm:space-y-3 max-w-4xl">
+          <div className="space-y-2.5 sm:space-y-3 max-w-4xl">
+            {/* Main Recruiter Showcase (Vietnam Company) */}
+            <div className="inline-flex flex-wrap items-center gap-x-2.5 gap-y-1 bg-[#121212]/92 border-l-4 border-[#10b981] border-y border-r border-y-[#27272a] border-r-[#27272a] px-3 sm:px-4 py-1.5 sm:py-2 shadow-[0_0_24px_rgba(16,185,129,0.16)]">
+              <div className="flex items-center gap-2">
+                <VietnamFlag
+                  label="Vietnam Flag"
+                  className="w-[22px] h-[15px] sm:w-[24px] sm:h-[17px]"
+                />
+                <span className="font-brutal-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-[#10b981]">
+                  {t.hero.mainRecruiterLabel}
+                </span>
+              </div>
+              <span className="hidden sm:inline text-[#52525b]" aria-hidden="true">
+                ·
+              </span>
+              <span className="font-brutal-mono text-xs sm:text-sm font-bold text-white tracking-wide">
+                {vietnamPartnerName}
+              </span>
+              <span className="hidden md:inline text-[#52525b]" aria-hidden="true">
+                ·
+              </span>
+              <span className="hidden md:inline text-xs text-[#d4d4d8]">
+                {t.hero.mainRecruiterLocation}
+              </span>
+            </div>
+
             <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-brutal-mono text-[11px] sm:text-xs font-bold">
               <span className="text-[#FF5500] tracking-wider">
                 0{activeSlide + 1}/0{SLIDE_IMAGES.length} · {currentSlideCopy.kicker}
