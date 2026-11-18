@@ -28,5 +28,43 @@
       </div>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>
+    <script>
+      (function () {
+        var bootError = '';
+        window.addEventListener(
+          'error',
+          function (e) {
+            if (!bootError) {
+              bootError = (e && (e.message || (e.target && e.target.src))) || 'Script load failure';
+            }
+          },
+          true
+        );
+        window.addEventListener('unhandledrejection', function (e) {
+          if (!bootError && e && e.reason) {
+            bootError = e.reason.message || String(e.reason);
+          }
+        });
+        window.addEventListener('load', function () {
+          setTimeout(function () {
+            var root = document.getElementById('root');
+            if (root && root.childElementCount === 0) {
+              root.innerHTML =
+                '<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;background:#0a0a0a;color:#ffffff;font-family:monospace">' +
+                '<div style="max-width:560px;width:100%;background:#121212;border:2px solid #FF5500;padding:24px">' +
+                '<p style="color:#FF5500;font-weight:bold;margin:0 0 8px 0;font-size:12px">HANDS &amp; HEAD HR — DEPLOYMENT DIAGNOSTIC</p>' +
+                '<h1 style="margin:0 0 12px 0;font-size:20px;font-family:sans-serif">Application bundle did not start</h1>' +
+                '<p style="color:#A1A1AA;font-size:13px;line-height:1.5;margin:0 0 12px 0">If hosted on GitHub Pages, open Repository Settings &rarr; Pages and set <strong>Source</strong> to <strong>GitHub Actions</strong> so <code>.github/workflows/deploy.yml</code> serves the compiled <code>dist/</code> bundle.</p>' +
+                (bootError
+                  ? '<p style="color:#e11d48;font-size:12px;word-break:break-word;margin:0">Detail: ' +
+                    String(bootError).replace(/[<>&]/g, '') +
+                    '</p>'
+                  : '') +
+                '</div></div>';
+            }
+          }, 2500);
+        });
+      })();
+    </script>
   </body>
 </html>

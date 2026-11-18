@@ -31,6 +31,9 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       localStorage.removeItem('hh_hr_candidates_v2');
       localStorage.removeItem('hh_hr_requisitions_v2');
       localStorage.removeItem('hh_hr_locale_v2');
+      if (typeof indexedDB !== 'undefined') {
+        indexedDB.deleteDatabase('hh_hr_vault_v1');
+      }
     } catch {
       // ignore storage errors
     }
