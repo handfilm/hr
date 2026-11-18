@@ -132,7 +132,7 @@ export function PublicHomePage({
   const currentSlideCopy = t.heroSlides[activeSlide] ?? t.heroSlides[0];
 
   return (
-    <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 py-6 sm:py-10 space-y-14">
+    <div className="relative z-10 max-w-[1440px] mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-12 sm:space-y-14">
       {/* FULL-WIDTH FRAMED HERO PHOTO SLIDER */}
       <section
         aria-label="Featured textile & industrial recruitment showcase"
@@ -140,7 +140,7 @@ export function PublicHomePage({
         onMouseLeave={() => setSliderPaused(false)}
         onFocus={() => setSliderPaused(true)}
         onBlur={() => setSliderPaused(false)}
-        className="relative border-2 border-[#27272a] bg-[#0a0a0a] overflow-hidden min-h-[540px] sm:min-h-[580px] lg:min-h-[620px] flex flex-col justify-between"
+        className="relative border-2 border-[#27272a] bg-[#0a0a0a] overflow-hidden min-h-[430px] sm:min-h-[520px] lg:min-h-[580px] flex flex-col justify-between"
       >
         {/* Background Slides */}
         <div className="absolute inset-0 z-0">
@@ -184,22 +184,24 @@ export function PublicHomePage({
           />
         </div>
 
-        {/* Hero Top Bar: Live Demand Indicator + Manual Slider Controls */}
-        <div className="relative z-10 p-5 sm:p-8 lg:px-10 flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-3">
-            <span className="px-3.5 py-2 bg-[#121212]/90 border-2 border-[#e11d48] font-brutal-mono text-xs font-bold text-white tracking-wider">
-              {t.hero.quotaPill}
-            </span>
-
+        {/* Hero Top Bar: Compact Single-Row Quota Info + Manual Slider Controls */}
+        <div className="relative z-10 p-3.5 sm:p-6 lg:px-10 flex flex-wrap items-center justify-between gap-2.5">
+          <div className="flex flex-wrap items-center gap-2 bg-[#121212]/90 border border-[#e11d48]/80 px-3 py-1.5 font-brutal-mono text-[11px] sm:text-xs font-bold">
+            <span className="text-white">{t.hero.quotaPill}</span>
             {vnDemand && (
-              <span className="px-3.5 py-2 bg-[#121212]/90 border-2 border-[#FF5500] font-brutal-mono text-xs font-bold tabular-nums text-[#FF5500]">
-                {vnRemaining} / {vnDemand.openQuota} OPEN · {vnDemand.lockedSlots} LOCKED
-              </span>
+              <>
+                <span className="text-[#52525b]" aria-hidden="true">
+                  ·
+                </span>
+                <span className="text-[#FF5500] tabular-nums">
+                  {vnRemaining}/{vnDemand.openQuota} OPEN
+                </span>
+              </>
             )}
           </div>
 
           {/* Manual Slide Controls + Indicator Bars */}
-          <div className="flex items-center gap-2 bg-[#0a0a0a]/85 border border-[#27272a] p-1.5">
+          <div className="flex items-center gap-1.5 bg-[#0a0a0a]/85 border border-[#27272a] p-1">
             <button
               type="button"
               onClick={() =>
@@ -208,12 +210,12 @@ export function PublicHomePage({
                 )
               }
               aria-label={t.hero.prevSlide}
-              className="w-11 h-11 border border-[#27272a] hover:border-[#FF5500] bg-[#121212] text-white flex items-center justify-center cursor-pointer transition-colors"
+              className="w-9 h-9 sm:w-10 sm:h-10 border border-[#27272a] hover:border-[#FF5500] bg-[#121212] text-white flex items-center justify-center cursor-pointer transition-colors"
             >
-              <ChevronLeft className="w-5 h-5" aria-hidden="true" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
             </button>
 
-            <div className="flex items-center gap-1.5 px-2" role="tablist" aria-label="Hero slides">
+            <div className="flex items-center gap-1.5 px-1.5" role="tablist" aria-label="Hero slides">
               {SLIDE_IMAGES.map((_, idx) => {
                 const isCurrent = idx === activeSlide;
                 return (
@@ -224,10 +226,10 @@ export function PublicHomePage({
                     aria-selected={isCurrent}
                     aria-label={`Slide ${idx + 1}`}
                     onClick={() => setActiveSlide(idx)}
-                    className={`h-2.5 transition-all cursor-pointer ${
+                    className={`h-2 transition-all cursor-pointer ${
                       isCurrent
-                        ? 'w-9 bg-[#FF5500]'
-                        : 'w-4 bg-[#52525b] hover:bg-[#A1A1AA]'
+                        ? 'w-7 sm:w-9 bg-[#FF5500]'
+                        : 'w-3 sm:w-4 bg-[#52525b] hover:bg-[#A1A1AA]'
                     }`}
                   />
                 );
@@ -240,37 +242,37 @@ export function PublicHomePage({
                 setActiveSlide((prev) => (prev + 1) % SLIDE_IMAGES.length)
               }
               aria-label={t.hero.nextSlide}
-              className="w-11 h-11 border border-[#27272a] hover:border-[#FF5500] bg-[#121212] text-white flex items-center justify-center cursor-pointer transition-colors"
+              className="w-9 h-9 sm:w-10 sm:h-10 border border-[#27272a] hover:border-[#FF5500] bg-[#121212] text-white flex items-center justify-center cursor-pointer transition-colors"
             >
-              <ChevronRight className="w-5 h-5" aria-hidden="true" />
+              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
             </button>
           </div>
         </div>
 
         {/* Hero Bottom Stage: Localized Slide Headline + Overlaid Primary & Secondary CTAs */}
-        <div className="relative z-10 p-5 sm:p-8 lg:p-10 space-y-6">
-          <div className="space-y-3 max-w-4xl">
-            <div className="flex flex-wrap items-center gap-3 font-brutal-mono text-xs font-bold">
+        <div className="relative z-10 p-4 sm:p-7 lg:p-10 space-y-4 sm:space-y-6">
+          <div className="space-y-2 sm:space-y-3 max-w-4xl">
+            <div className="flex flex-wrap items-center gap-x-2.5 gap-y-1 font-brutal-mono text-[11px] sm:text-xs font-bold">
               <span className="text-[#FF5500] tracking-wider">
-                0{activeSlide + 1} / 0{SLIDE_IMAGES.length} · {currentSlideCopy.kicker}
+                0{activeSlide + 1}/0{SLIDE_IMAGES.length} · {currentSlideCopy.kicker}
               </span>
-              <span className="text-[#A1A1AA]" aria-hidden="true">
+              <span className="text-[#52525b]" aria-hidden="true">
                 |
               </span>
               <span className="text-[#10b981]">{currentSlideCopy.highlightBadge}</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-[54px] font-bold leading-[1.12] text-white text-balance">
+            <h1 className="text-2xl sm:text-4xl lg:text-[52px] font-bold leading-[1.14] text-white text-balance">
               {currentSlideCopy.headline}
             </h1>
 
-            <p className="text-sm sm:text-base text-[#e4e4e7] font-medium max-w-3xl">
+            <p className="text-xs sm:text-base text-[#e4e4e7] font-medium max-w-3xl">
               {currentSlideCopy.subline}
             </p>
           </div>
 
-          {/* Two Oversized Primary CTAs Overlaid on Hero Bottom Stage (72px–76px) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Two Oversized Primary CTAs Overlaid on Hero Bottom Stage */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
             <HoverDetailButton
               badge={t.hoverCards.applyNow.badge}
               title={t.hoverCards.applyNow.title}
@@ -281,13 +283,13 @@ export function PublicHomePage({
               <button
                 type="button"
                 onClick={() => onOpenWizard(1)}
-                className="w-full min-h-[74px] px-6 bg-[#FF5500] hover:bg-[#ff6a1a] text-black font-bold text-lg sm:text-xl uppercase tracking-wide flex items-center justify-between gap-4 shadow-[0_0_32px_rgba(255,85,0,0.4)] transition-all cursor-pointer"
+                className="w-full min-h-[60px] sm:min-h-[72px] px-5 sm:px-6 bg-[#FF5500] hover:bg-[#ff6a1a] text-black font-bold text-base sm:text-xl uppercase tracking-wide flex items-center justify-between gap-3 shadow-[0_0_28px_rgba(255,85,0,0.4)] transition-all cursor-pointer"
               >
                 <span className="flex items-center gap-3">
-                  <ClipboardCheck className="w-7 h-7 shrink-0" aria-hidden="true" />
+                  <ClipboardCheck className="w-6 h-6 sm:w-7 sm:h-7 shrink-0" aria-hidden="true" />
                   <span>{t.hero.applyNow}</span>
                 </span>
-                <ArrowUpRight className="w-7 h-7 shrink-0" aria-hidden="true" />
+                <ArrowUpRight className="w-6 h-6 sm:w-7 sm:h-7 shrink-0" aria-hidden="true" />
               </button>
             </HoverDetailButton>
 
@@ -302,19 +304,19 @@ export function PublicHomePage({
                 href={whatsappDirectHref}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full min-h-[74px] px-6 bg-[#10b981] hover:bg-[#34d399] text-black font-bold text-lg sm:text-xl uppercase tracking-wide flex items-center justify-between gap-4 shadow-[0_0_28px_rgba(16,185,129,0.32)] transition-all"
+                className="w-full min-h-[60px] sm:min-h-[72px] px-5 sm:px-6 bg-[#10b981] hover:bg-[#34d399] text-black font-bold text-base sm:text-xl uppercase tracking-wide flex items-center justify-between gap-3 shadow-[0_0_24px_rgba(16,185,129,0.32)] transition-all"
               >
                 <span className="flex items-center gap-3">
-                  <MessageCircle className="w-7 h-7 shrink-0" aria-hidden="true" />
+                  <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7 shrink-0" aria-hidden="true" />
                   <span>{t.hero.whatsappDirect}</span>
                 </span>
-                <ArrowUpRight className="w-7 h-7 shrink-0" aria-hidden="true" />
+                <ArrowUpRight className="w-6 h-6 sm:w-7 sm:h-7 shrink-0" aria-hidden="true" />
               </a>
             </HoverDetailButton>
           </div>
 
-          {/* Two Secondary Giant Tiles (68px) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Two Secondary Giant Tiles */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             <HoverDetailButton
               badge={t.hoverCards.checkEligibility.badge}
               title={t.hoverCards.checkEligibility.title}
@@ -325,10 +327,10 @@ export function PublicHomePage({
               <button
                 type="button"
                 onClick={() => onOpenWizard(2)}
-                className="w-full min-h-[68px] px-6 bg-[#121212]/95 hover:border-[#FF5500] border-2 border-[#27272a] text-white font-bold text-base sm:text-lg uppercase tracking-wide flex items-center justify-between gap-4 transition-colors cursor-pointer"
+                className="w-full min-h-[54px] sm:min-h-[64px] px-5 sm:px-6 bg-[#121212]/95 hover:border-[#FF5500] border-2 border-[#27272a] text-white font-bold text-sm sm:text-lg uppercase tracking-wide flex items-center justify-between gap-3 transition-colors cursor-pointer"
               >
                 <span className="flex items-center gap-3">
-                  <ShieldCheck className="w-6 h-6 text-[#FF5500] shrink-0" aria-hidden="true" />
+                  <ShieldCheck className="w-5 h-5 sm:w-6 sm:h-6 text-[#FF5500] shrink-0" aria-hidden="true" />
                   <span>{t.hero.checkEligibility}</span>
                 </span>
                 <ArrowUpRight className="w-5 h-5 text-[#A1A1AA] shrink-0" aria-hidden="true" />
@@ -345,10 +347,10 @@ export function PublicHomePage({
               <button
                 type="button"
                 onClick={scrollToTracker}
-                className="w-full min-h-[68px] px-6 bg-[#121212]/95 hover:border-[#f59e0b] border-2 border-[#27272a] text-white font-bold text-base sm:text-lg uppercase tracking-wide flex items-center justify-between gap-4 transition-colors cursor-pointer"
+                className="w-full min-h-[54px] sm:min-h-[64px] px-5 sm:px-6 bg-[#121212]/95 hover:border-[#f59e0b] border-2 border-[#27272a] text-white font-bold text-sm sm:text-lg uppercase tracking-wide flex items-center justify-between gap-3 transition-colors cursor-pointer"
               >
                 <span className="flex items-center gap-3">
-                  <Search className="w-6 h-6 text-[#f59e0b] shrink-0" aria-hidden="true" />
+                  <Search className="w-5 h-5 sm:w-6 sm:h-6 text-[#f59e0b] shrink-0" aria-hidden="true" />
                   <span>{t.hero.trackStatus}</span>
                 </span>
                 <ArrowUpRight className="w-5 h-5 text-[#A1A1AA] shrink-0" aria-hidden="true" />
@@ -380,7 +382,7 @@ export function PublicHomePage({
             <button
               type="button"
               onClick={onOpenLegalModal}
-              className="min-h-[68px] px-6 bg-[#18181b] border-2 border-[#f59e0b] hover:bg-[#f59e0b] hover:text-black text-[#f59e0b] font-bold text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-3 transition-colors cursor-pointer shrink-0"
+              className="min-h-[64px] px-6 bg-[#18181b] border-2 border-[#f59e0b] hover:bg-[#f59e0b] hover:text-black text-[#f59e0b] font-bold text-sm sm:text-base uppercase tracking-wider flex items-center justify-center gap-3 transition-colors cursor-pointer shrink-0"
             >
               <Scale className="w-6 h-6 shrink-0" aria-hidden="true" />
               <span>{t.matrix.legalButton}</span>
@@ -465,7 +467,7 @@ export function PublicHomePage({
             value={trackerQuery}
             onChange={(e) => onTrackerQueryChange(e.target.value)}
             placeholder={t.tracker.placeholder}
-            className="flex-1 min-h-[68px] px-5 bg-[#18181b] border-2 border-[#27272a] focus:border-[#FF5500] text-white font-brutal-mono text-sm sm:text-base placeholder:text-[#A1A1AA] focus:outline-none"
+            className="flex-1 min-h-[64px] px-5 bg-[#18181b] border-2 border-[#27272a] focus:border-[#FF5500] text-white font-brutal-mono text-sm sm:text-base placeholder:text-[#A1A1AA] focus:outline-none"
           />
           <HoverDetailButton
             badge={t.hoverCards.trackStatus.badge}
@@ -476,7 +478,7 @@ export function PublicHomePage({
           >
             <button
               type="submit"
-              className="w-full sm:w-auto min-h-[68px] px-8 bg-[#FF5500] hover:bg-[#ff6a1a] text-black font-bold text-base uppercase tracking-wider flex items-center justify-center gap-2.5 cursor-pointer shrink-0"
+              className="w-full sm:w-auto min-h-[64px] px-8 bg-[#FF5500] hover:bg-[#ff6a1a] text-black font-bold text-base uppercase tracking-wider flex items-center justify-center gap-2.5 cursor-pointer shrink-0"
             >
               <Search className="w-5 h-5" aria-hidden="true" />
               <span>{t.tracker.searchBtn}</span>
