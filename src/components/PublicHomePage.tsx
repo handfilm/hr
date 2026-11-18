@@ -8,13 +8,14 @@ import {
   Search,
   ShieldCheck,
 } from 'lucide-react';
-import { Candidate } from '../types';
-import { PIPELINE_STAGES } from '../data/initialData';
-import { Translations } from '../i18n';
+import type { Candidate, JobRequisition } from '../types.ts';
+import { PIPELINE_STAGES } from '../data/initialData.ts';
+import type { Translations } from '../i18n.ts';
 
 interface PublicHomePageProps {
   t: Translations;
   candidates: Candidate[];
+  requisitions: JobRequisition[];
   trackerQuery: string;
   onTrackerQueryChange: (q: string) => void;
   onOpenWizard: (initialStep: 1 | 2) => void;
@@ -24,6 +25,7 @@ interface PublicHomePageProps {
 export function PublicHomePage({
   t,
   candidates,
+  requisitions,
   trackerQuery,
   onTrackerQueryChange,
   onOpenWizard,
@@ -32,6 +34,15 @@ export function PublicHomePage({
   const [submittedSearch, setSubmittedSearch] = useState(trackerQuery);
 
   const activeSearch = (submittedSearch || trackerQuery).trim().toLowerCase();
+
+  const vnDemand = useMemo(
+    () => requisitions.find((r) => r.id === 'REQ-VN-2027') ?? requisitions[0],
+    [requisitions],
+  );
+
+  const vnRemaining = vnDemand
+    ? Math.max(0, vnDemand.openQuota - (vnDemand.lockedSlots + vnDemand.confirmedSlots))
+    : 10;
 
   const trackedCandidate = useMemo(() => {
     if (!activeSearch) return candidates[0] ?? null;
@@ -83,11 +94,23 @@ export function PublicHomePage({
     <div className="relative z-10 max-w-[1440px] mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-14">
       {/* HERO SECTION */}
       <section className="bg-[#121212] border-2 border-[#27272a] p-6 sm:p-10 lg:p-12 space-y-8">
-        <div className="inline-flex items-center gap-3 px-4 py-2 bg-[#18181b] border-2 border-[#e11d48]">
-          <span className="w-2.5 h-2.5 bg-[#e11d48]" aria-hidden="true" />
-          <span className="font-brutal-mono text-xs sm:text-sm font-bold text-white tracking-wider">
-            {t.hero.quotaPill}
-          </span>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="inline-flex items-center gap-3 px-4 py-2 bg-[#18181b] border-2 border-[#e11d48]">
+            <span className="w-2.5 h-2.5 bg-[#e11d48]" aria-hidden="true" />
+            <span className="font-brutal-mono text-xs sm:text-sm font-bold text-white tracking-wider">
+              {t.hero.quotaPill}
+            </span>
+          </div>
+
+          {vnDemand && (
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#18181b] border-2 border-[#FF5500] font-brutal-mono text-xs font-bold tabular-nums">
+              <span className="text-[#FF5500]">
+                {vnRemaining} / {vnDemand.openQuota} OPEN
+              </span>
+              <span className="text-[#A1A1AA]">·</span>
+              <span className="text-[#f59e0b]">{vnDemand.lockedSlots} LOCKED</span>
+            </div>
+          )}
         </div>
 
         <div className="space-y-4 max-w-5xl">

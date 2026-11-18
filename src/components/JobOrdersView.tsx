@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Plus } from 'lucide-react';
-import { Candidate, JobRequisition } from '../types';
-import { Translations } from '../i18n';
+import type { Candidate, JobRequisition } from '../types.ts';
+import type { Translations } from '../i18n.ts';
 
 interface JobOrdersViewProps {
   requisitions: JobRequisition[];
@@ -70,13 +70,14 @@ export function JobOrdersView({
                 <th className="py-3.5 px-4">{t.labels.sector}</th>
                 <th className="py-3.5 px-4">{t.labels.language}</th>
                 <th className="py-3.5 px-4 text-right">{t.labels.salary}</th>
-                <th className="py-3.5 px-4 text-right">{t.labels.quota}</th>
+                <th className="py-3.5 px-4 text-right">LOCKS / {t.labels.quota}</th>
                 <th className="py-3.5 px-5 text-right">{t.labels.deadline}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#27272a] text-sm">
               {filteredReqs.map((req) => {
                 const matched = candidates.filter((c) => c.assignedRequisitionId === req.id);
+                const used = req.lockedSlots + req.confirmedSlots;
                 return (
                   <tr key={req.id} className="hover:bg-[#18181b] transition-colors">
                     <td className="py-4 px-5 font-brutal-mono text-xs font-bold text-[#FF5500] tabular-nums whitespace-nowrap">
@@ -85,7 +86,7 @@ export function JobOrdersView({
                     <td className="py-4 px-4">
                       <p className="font-bold text-white">{req.employerName}</p>
                       <p className="font-brutal-mono text-xs text-[#A1A1AA] mt-0.5">
-                        {req.preferredCorridor} · {req.coordinator}
+                        {req.title} · {req.coordinator}
                       </p>
                       {matched.length > 0 && (
                         <div className="mt-2 flex flex-wrap gap-2 text-xs">
@@ -114,8 +115,13 @@ export function JobOrdersView({
                     <td className="py-4 px-4 text-right font-brutal-mono font-bold text-white tabular-nums whitespace-nowrap">
                       {req.monthlySalaryDisplay}
                     </td>
-                    <td className="py-4 px-4 text-right font-brutal-display text-2xl text-[#FF5500] tabular-nums whitespace-nowrap">
-                      {req.filledCount} / {req.openQuota}
+                    <td className="py-4 px-4 text-right whitespace-nowrap">
+                      <span className="font-brutal-display text-2xl text-[#FF5500] tabular-nums block">
+                        {used} / {req.openQuota}
+                      </span>
+                      <span className="font-brutal-mono text-[10px] text-[#A1A1AA] tabular-nums">
+                        {req.lockedSlots} LOCKED · {req.confirmedSlots} CONF
+                      </span>
                     </td>
                     <td className="py-4 px-5 text-right font-brutal-mono text-xs text-[#A1A1AA] tabular-nums whitespace-nowrap">
                       {req.deadline}

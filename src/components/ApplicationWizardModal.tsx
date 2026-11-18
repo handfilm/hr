@@ -1,4 +1,5 @@
-import { ChangeEvent, FormEvent, useMemo, useState } from 'react';
+import { ChangeEvent, FormEvent, useEffect, useMemo, useState } from 'react';
+import QRCode from 'qrcode';
 import {
   AlertTriangle,
   ArrowLeft,
@@ -10,14 +11,19 @@ import {
   ShieldCheck,
   X,
 } from 'lucide-react';
-import { Candidate, CandidateDocuments } from '../types';
-import { Translations } from '../i18n';
+import type { DocType } from '../shared/enums.ts';
+import type { Candidate, CandidateDocumentItem, CandidateDocuments } from '../types.ts';
+import type { Translations } from '../i18n.ts';
 
 interface ApplicationWizardModalProps {
   t: Translations;
   initialStep?: 1 | 2;
   onClose: () => void;
-  onSubmitCandidate: (candidate: Candidate) => void;
+  onUploadDocument: (file: File, docType: DocType) => Promise<CandidateDocumentItem>;
+  onSubmitCandidate: (
+    candidate: Candidate,
+    englishScore: number,
+  ) => Promise<void> | void;
   onJumpToTracker: (trackingId: string) => void;
 }
 
@@ -25,6 +31,7 @@ export function ApplicationWizardModal({
   t,
   initialStep = 1,
   onClose,
+  onUploadDocument,
   onSubmitCandidate,
   onJumpToTracker,
 }: ApplicationWizardModalProps) {
@@ -54,9 +61,29 @@ export function ApplicationWizardModal({
     'I can speak and write English and am ready for 12-hour rotating factory shifts.',
   );
 
-  // Step 4: Documents
+  // Step 4: Documents (Signed-URL / Local Vault pipeline)
   const [documents, setDocuments] = useState<CandidateDocuments>({});
+  const [documentItems, setDocumentItems] = useState<CandidateDocumentItem[]>([]);
+  const [uploadingKey, setUploadingKey] = useState<string | null>(null);
   const [submittedCandidate, setSubmittedCandidate] = useState<Candidate | null>(null);
+  const [qrDataUrl, setQrDataUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!submittedCandidate) {
+      setQrDataUrl(null);
+      return;
+    }
+    const trackUrl = `https://hr.handsandhead.com/?track=${encodeURIComponent(
+      submittedCandidate.id,
+    )}`;
+    QRCode.toDataURL(trackUrl, {
+      width: 180,
+      margin: 1,
+      color: { dark: '#0a0a0a', light: '#ffffff' },
+    })
+      .then((url) => setQrDataUrl(url))
+      .catch(() => setQrDataUrl(null));
+  }, [submittedCandidate]);
 
   const liveMetrics = useMemo(() => {
     const safeHeight = Math.max(100, heightCm || 160);
@@ -93,11 +120,23 @@ export function ApplicationWizardModal({
     t.wizard,
   ]);
 
-  const handleFileChange = (key: keyof CandidateDocuments) => (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setDocuments((prev) => ({ ...prev, [key]: file.name }));
-  };
+  const handleFileChange =
+    (key: keyof CandidateDocuments, docType: DocType) =>
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      setUploadingKey(key);
+      try {
+        const uploaded = await onUploadDocument(file, docType);
+        setDocuments((prev) => ({ ...prev, [key]: uploaded.fileName }));
+        setDocumentItems((prev) => [
+          ...prev.filter((d) => d.docType !== docType),
+          uploaded,
+        ]);
+      } finally {
+        setUploadingKey(null);
+      }
+    };
 
   const attachSampleDocs = () => {
     setDocuments({
@@ -106,13 +145,44 @@ export function ApplicationWizardModal({
       photoFile: 'candidate_portrait.jpg',
       certificateFile: 'ssc_certificate.pdf',
     });
+    setDocumentItems([
+      {
+        id: `DOC-SAMPLE-PP-${Date.now()}`,
+        docType: 'PASSPORT',
+        fileName: 'passport_bio_scan.pdf',
+        storageUrl: 'local-vault://passport_bio_scan.pdf',
+        uploadStatus: 'LOCAL_VAULT',
+      },
+      {
+        id: `DOC-SAMPLE-NID-${Date.now()}`,
+        docType: 'NID',
+        fileName: 'national_id_card.jpg',
+        storageUrl: 'local-vault://national_id_card.jpg',
+        uploadStatus: 'LOCAL_VAULT',
+      },
+      {
+        id: `DOC-SAMPLE-PH-${Date.now()}`,
+        docType: 'PHOTO',
+        fileName: 'candidate_portrait.jpg',
+        storageUrl: 'local-vault://candidate_portrait.jpg',
+        uploadStatus: 'LOCAL_VAULT',
+      },
+      {
+        id: `DOC-SAMPLE-CERT-${Date.now()}`,
+        docType: 'CERTIFICATE',
+        fileName: 'ssc_certificate.pdf',
+        storageUrl: 'local-vault://ssc_certificate.pdf',
+        uploadStatus: 'LOCAL_VAULT',
+      },
+    ]);
   };
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const randomCode = Math.floor(1000 + Math.random() * 9000);
     const trackingId = `HH-2026-${randomCode}`;
     const today = new Date().toISOString().slice(0, 10);
+    const englishScore = [engSpeak, engWrite, engSafety].filter(Boolean).length;
 
     const newCandidate: Candidate = {
       id: trackingId,
@@ -129,33 +199,34 @@ export function ApplicationWizardModal({
       originHub: 'Dhaka Training Center',
       partnerAgency: 'Silver Group',
       tradeSector: 'Industrial Yarn & Spinning Line',
-      jlptLevel: engSpeak && engWrite && engSafety ? 'English Ready' : 'N5',
+      jlptLevel: englishScore >= 2 ? 'English Ready' : 'N5',
       visaProgram: 'Industrial Work Permit',
       stage: 'Application Submitted',
       assignedRequisitionId: 'REQ-VN-2027',
-      targetPrefecture: 'Hung Yen, Vietnam',
+      targetPrefecture: 'Hung Yen Province, Vietnam',
       interviewDate: '2026-12-01',
       updatedAt: today,
       eligible: liveMetrics.isEligible,
       selfIntro: selfIntro.trim(),
       documents,
+      documentItems,
       checklist: {
         passportVerified: Boolean(passportNumber.trim() || documents.passportFile),
         medicalCleared: medNoInfectious && medNoHeartNeuro && medNoHeightFear,
-        languagePassed: engSpeak && engWrite && engSafety,
+        languagePassed: englishScore >= 2,
         coeSubmitted: false,
         visaStamped: false,
         flightBriefed: false,
       },
     };
 
-    onSubmitCandidate(newCandidate);
+    await onSubmitCandidate(newCandidate, englishScore);
     setSubmittedCandidate(newCandidate);
   };
 
   const whatsappReceiptHref = submittedCandidate
     ? `https://wa.me/8801700000000?text=${encodeURIComponent(
-        `Hands & Head HR Application Receipt\nTracking ID: ${submittedCandidate.id}\nName: ${submittedCandidate.fullName}\nPhone: ${submittedCandidate.phone}\nDemand: Vietnam Yarn Factory ($500/mo)\nEligibility: ${submittedCandidate.eligible ? '100% ELIGIBLE' : 'REVIEW REQUIRED'}`,
+        `Hands & Head HR Application Receipt\nTracking ID: ${submittedCandidate.id}\nName: ${submittedCandidate.fullName}\nPhone: ${submittedCandidate.phone}\nDemand: Vietnam Yarn Factory ($500/mo)\nEligibility: ${submittedCandidate.eligible ? '100% ELIGIBLE' : 'REVIEW REQUIRED'}\nTrack: https://hr.handsandhead.com/?track=${submittedCandidate.id}`,
       )}`
     : '#';
 
@@ -187,7 +258,7 @@ export function ApplicationWizardModal({
           </button>
         </div>
 
-        {/* If Submitted -> Digital Candidate Pass */}
+        {/* If Submitted -> Digital Candidate Pass with Scannable QR */}
         {submittedCandidate ? (
           <div className="p-6 space-y-6">
             <div className="bg-[#18181b] border-2 border-[#10b981] p-6 space-y-5 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
@@ -199,10 +270,22 @@ export function ApplicationWizardModal({
                   <p className="font-brutal-mono text-3xl sm:text-4xl font-bold text-white tracking-wider mt-1">
                     {submittedCandidate.id}
                   </p>
+                  <div className="mt-2 inline-block px-3 py-1 bg-[#10b981] text-black font-brutal-mono text-xs font-bold uppercase">
+                    {submittedCandidate.eligible
+                      ? t.wizard.eligibleBadge
+                      : t.wizard.mismatchBadge}
+                  </div>
                 </div>
-                <div className="px-4 py-2 bg-[#10b981] text-black font-brutal-mono text-xs font-bold uppercase self-start">
-                  {submittedCandidate.eligible ? t.wizard.eligibleBadge : t.wizard.mismatchBadge}
-                </div>
+
+                {qrDataUrl && (
+                  <div className="bg-white p-2 border-2 border-[#10b981] self-start shrink-0">
+                    <img
+                      src={qrDataUrl}
+                      alt={`QR Tracking Pass ${submittedCandidate.id}`}
+                      className="w-28 h-28"
+                    />
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
@@ -212,11 +295,17 @@ export function ApplicationWizardModal({
                 </div>
                 <div>
                   <p className="font-brutal-mono text-xs text-[#A1A1AA]">{t.wizard.phone}</p>
-                  <p className="font-brutal-mono font-bold text-white mt-1">{submittedCandidate.phone}</p>
+                  <p className="font-brutal-mono font-bold text-white mt-1">
+                    {submittedCandidate.phone}
+                  </p>
                 </div>
                 <div>
-                  <p className="font-brutal-mono text-xs text-[#A1A1AA]">{t.labels.prefecture}</p>
-                  <p className="font-bold text-white mt-1">{submittedCandidate.targetPrefecture}</p>
+                  <p className="font-brutal-mono text-xs text-[#A1A1AA]">
+                    {t.labels.prefecture}
+                  </p>
+                  <p className="font-bold text-white mt-1">
+                    {submittedCandidate.targetPrefecture}
+                  </p>
                 </div>
               </div>
 
@@ -350,7 +439,6 @@ export function ApplicationWizardModal({
             {/* STEP 2: LIVE AUTO-VALIDATOR */}
             {step === 2 && (
               <div className="space-y-5">
-                {/* Live Eligibility Banner */}
                 <div
                   className={`p-4 border-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
                     liveMetrics.isEligible
@@ -563,13 +651,14 @@ export function ApplicationWizardModal({
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   {(
                     [
-                      { key: 'passportFile', label: t.wizard.docPassport },
-                      { key: 'nidFile', label: t.wizard.docNid },
-                      { key: 'photoFile', label: t.wizard.docPhoto },
-                      { key: 'certificateFile', label: t.wizard.docCert },
+                      { key: 'passportFile', docType: 'PASSPORT', label: t.wizard.docPassport },
+                      { key: 'nidFile', docType: 'NID', label: t.wizard.docNid },
+                      { key: 'photoFile', docType: 'PHOTO', label: t.wizard.docPhoto },
+                      { key: 'certificateFile', docType: 'CERTIFICATE', label: t.wizard.docCert },
                     ] as const
                   ).map((doc) => {
                     const fileName = documents[doc.key];
+                    const isUploading = uploadingKey === doc.key;
                     return (
                       <label
                         key={doc.key}
@@ -582,7 +671,7 @@ export function ApplicationWizardModal({
                         <div className="min-w-0">
                           <p className="text-sm font-bold text-white">{doc.label}</p>
                           <p className="font-brutal-mono text-xs text-[#A1A1AA] truncate mt-0.5">
-                            {fileName ?? 'PDF / JPG / PNG'}
+                            {isUploading ? 'UPLOADING...' : fileName ?? 'PDF / JPG / PNG'}
                           </p>
                         </div>
                         <FileUp
@@ -593,7 +682,7 @@ export function ApplicationWizardModal({
                         <input
                           type="file"
                           accept=".pdf,.jpg,.jpeg,.png"
-                          onChange={handleFileChange(doc.key)}
+                          onChange={handleFileChange(doc.key, doc.docType)}
                           className="sr-only"
                         />
                       </label>

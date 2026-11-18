@@ -1,6 +1,7 @@
-import { Layers, ShieldAlert, ArrowLeftRight } from 'lucide-react';
-import { AppMode, Locale } from '../types';
-import { Translations } from '../i18n';
+import { ArrowLeftRight, Database, Layers, ShieldAlert } from 'lucide-react';
+import type { AppMode, Locale } from '../types.ts';
+import type { Translations } from '../i18n.ts';
+import type { SyncMode } from '../sync/types.ts';
 
 interface TopAllianceHeaderProps {
   mode: AppMode;
@@ -9,6 +10,9 @@ interface TopAllianceHeaderProps {
   onChangeLocale: (locale: Locale) => void;
   overlayEnabled: boolean;
   onToggleOverlay: () => void;
+  syncMode: SyncMode;
+  outboxCount: number;
+  liveAvailableSlots: number;
   t: Translations;
 }
 
@@ -26,6 +30,9 @@ export function TopAllianceHeader({
   onChangeLocale,
   overlayEnabled,
   onToggleOverlay,
+  syncMode,
+  outboxCount,
+  liveAvailableSlots,
   t,
 }: TopAllianceHeaderProps) {
   return (
@@ -36,12 +43,15 @@ export function TopAllianceHeader({
           <button
             type="button"
             onClick={() => onToggleMode('public')}
-            className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5500]"
+            className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF5500] cursor-pointer"
           >
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2.5 flex-wrap">
               <span className="inline-block w-3 h-6 bg-[#FF5500] shrink-0" aria-hidden="true" />
               <span className="font-brutal-display text-2xl sm:text-3xl tracking-wider text-white whitespace-nowrap">
                 {t.portalTitle}
+              </span>
+              <span className="font-brutal-mono text-[11px] font-bold px-2 py-0.5 border border-[#27272a] bg-[#18181b] text-[#FF5500] tabular-nums whitespace-nowrap">
+                {liveAvailableSlots} SLOTS • LIVE LOCKS
               </span>
             </div>
             <p className="font-brutal-mono text-[10px] sm:text-xs text-[#A1A1AA] tracking-wider mt-0.5">
@@ -50,8 +60,26 @@ export function TopAllianceHeader({
           </button>
         </div>
 
-        {/* Right Controls: 4-Language Switcher + Overlay Toggle + Command Center Switch */}
+        {/* Right Controls: Sync Badge + 4-Language Switcher + Overlay Toggle + Command Center Switch */}
         <div className="flex flex-wrap items-center gap-2.5">
+          <div
+            className={`px-3 py-2 border-2 font-brutal-mono text-[11px] font-bold flex items-center gap-1.5 whitespace-nowrap ${
+              syncMode === 'LIVE_SERVER'
+                ? 'border-[#10b981] bg-[#10b981]/10 text-[#10b981]'
+                : 'border-[#f59e0b] bg-[#f59e0b]/10 text-[#f59e0b]'
+            }`}
+          >
+            <Database className="w-3.5 h-3.5 shrink-0" aria-hidden="true" />
+            <span>
+              {syncMode === 'LIVE_SERVER' ? 'LIVE SERVER SYNCED' : 'LOCAL VAULT SYNCED'}
+            </span>
+            {outboxCount > 0 && (
+              <span className="ml-1 px-1.5 py-0.5 bg-[#FF5500] text-black tabular-nums">
+                {outboxCount}
+              </span>
+            )}
+          </div>
+
           <div
             className="flex items-center bg-[#121212] border-2 border-[#27272a] p-1"
             role="group"

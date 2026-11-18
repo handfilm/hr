@@ -1,3 +1,5 @@
+import type { DocType, UploadStatus } from './shared/enums.ts';
+
 export type Locale = 'bn' | 'ja' | 'en' | 'vi';
 
 export type AppMode = 'public' | 'admin';
@@ -13,7 +15,11 @@ export type PipelineStage =
   | 'BMET Smart Card'
   | 'Deployed';
 
-export type VisaProgram = 'SSW (i)' | 'TITP' | 'Engineer / Specialist' | 'Industrial Work Permit';
+export type VisaProgram =
+  | 'SSW (i)'
+  | 'TITP'
+  | 'Engineer / Specialist'
+  | 'Industrial Work Permit';
 
 export interface ComplianceChecklist {
   passportVerified: boolean;
@@ -29,6 +35,15 @@ export interface CandidateDocuments {
   nidFile?: string;
   photoFile?: string;
   certificateFile?: string;
+}
+
+export interface CandidateDocumentItem {
+  id: string;
+  candidateId?: string;
+  docType: DocType;
+  fileName: string;
+  storageUrl: string;
+  uploadStatus: UploadStatus;
 }
 
 export interface Candidate {
@@ -56,19 +71,25 @@ export interface Candidate {
   eligible: boolean;
   selfIntro?: string;
   documents?: CandidateDocuments;
+  documentItems?: CandidateDocumentItem[];
   checklist: ComplianceChecklist;
 }
 
 export interface JobRequisition {
   id: string;
+  title: string;
   employerName: string;
+  country: 'VN' | 'JP';
   prefecture: string;
   sector: string;
   visaProgram: VisaProgram;
   jlptRequired: 'English Ready' | 'N5' | 'N4' | 'N3' | 'N2' | 'JFT-Basic A2';
   monthlySalaryDisplay: string;
   monthlySalaryJpy: number;
+  salaryUsd: number;
   openQuota: number;
+  lockedSlots: number;
+  confirmedSlots: number;
   filledCount: number;
   preferredCorridor: 'Bangladesh & Vietnam' | 'Bangladesh' | 'Vietnam';
   coordinator: string;

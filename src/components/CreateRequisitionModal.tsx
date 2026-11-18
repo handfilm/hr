@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { X } from 'lucide-react';
-import { JobRequisition, VisaProgram } from '../types';
-import { Translations } from '../i18n';
+import type { JobRequisition, VisaProgram } from '../types.ts';
+import type { Translations } from '../i18n.ts';
 
 interface CreateRequisitionModalProps {
   t: Translations;
@@ -15,6 +15,7 @@ export function CreateRequisitionModal({
   onSubmit,
 }: CreateRequisitionModalProps) {
   const [employerName, setEmployerName] = useState('');
+  const [country, setCountry] = useState<'JP' | 'VN'>('JP');
   const [prefecture, setPrefecture] = useState('Tokyo, Japan');
   const [sector, setSector] = useState('Industrial Manufacturing (CNC)');
   const [visaProgram, setVisaProgram] = useState<VisaProgram>('SSW (i)');
@@ -31,18 +32,26 @@ export function CreateRequisitionModal({
 
     const salaryNum = Number(monthlySalaryJpy) || 210000;
     const newReq: JobRequisition = {
-      id: `REQ-JP-${Math.floor(120 + Math.random() * 800)}`,
+      id: `REQ-${country}-${Math.floor(120 + Math.random() * 800)}`,
+      title: sector.trim(),
       employerName: employerName.trim(),
+      country,
       prefecture: prefecture.trim() || 'Tokyo, Japan',
       sector: sector.trim(),
       visaProgram,
       jlptRequired,
-      monthlySalaryDisplay: `¥${salaryNum.toLocaleString()} JPY`,
+      monthlySalaryDisplay:
+        country === 'VN'
+          ? `$${Math.round(salaryNum / 152)} USD / MO`
+          : `¥${salaryNum.toLocaleString()} JPY`,
       monthlySalaryJpy: salaryNum,
+      salaryUsd: Math.round(salaryNum / 150),
       openQuota: Math.max(1, Number(openQuota) || 1),
+      lockedSlots: 0,
+      confirmedSlots: 0,
       filledCount: 0,
       preferredCorridor,
-      coordinator: 'Kenji Hara',
+      coordinator: country === 'VN' ? 'Silver Group × Vietnam Partner' : 'Kenji Hara',
       deadline,
       status: 'Open',
     };
@@ -73,19 +82,36 @@ export function CreateRequisitionModal({
         </div>
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-          <div>
-            <label htmlFor="req-emp" className="block font-brutal-mono text-xs text-[#A1A1AA] mb-1">
-              {t.labels.employer}
-            </label>
-            <input
-              id="req-emp"
-              type="text"
-              required
-              value={employerName}
-              onChange={(e) => setEmployerName(e.target.value)}
-              placeholder="e.g. Yamato Logistics Engineering K.K."
-              className="w-full px-3 py-2.5 bg-[#18181b] border-2 border-[#27272a] focus:border-[#FF5500] text-white text-sm focus:outline-none"
-            />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="sm:col-span-2">
+              <label htmlFor="req-emp" className="block font-brutal-mono text-xs text-[#A1A1AA] mb-1">
+                {t.labels.employer}
+              </label>
+              <input
+                id="req-emp"
+                type="text"
+                required
+                value={employerName}
+                onChange={(e) => setEmployerName(e.target.value)}
+                placeholder="e.g. Yamato Logistics Engineering K.K."
+                className="w-full px-3 py-2.5 bg-[#18181b] border-2 border-[#27272a] focus:border-[#FF5500] text-white text-sm focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="req-country" className="block font-brutal-mono text-xs text-[#A1A1AA] mb-1">
+                DESTINATION
+              </label>
+              <select
+                id="req-country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value as 'JP' | 'VN')}
+                className="w-full px-3 py-2.5 bg-[#18181b] border-2 border-[#27272a] text-white text-sm focus:border-[#FF5500] focus:outline-none"
+              >
+                <option value="JP">Japan (JP)</option>
+                <option value="VN">Vietnam (VN)</option>
+              </select>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
